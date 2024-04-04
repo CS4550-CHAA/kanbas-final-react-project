@@ -1,5 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Question from "./Question";
+import MCAnswer from "./MCAnswer";
+import TFAnswer from "./TFAnswer";
+import FillInTheBlankAnswer from "./FillInTheBlankAnswer";
 
 function Questions() {
   const { pathname } = useLocation();
@@ -22,8 +26,13 @@ function Questions() {
                 <button className="btn btn-warning" type="button">Cancel</button>
                 <button className="btn btn-success" type="button">Save & Publish</button>
                 <button className="btn btn-danger" type="button">Save</button>
-            </div>  
+            </div>
         </div>
+        <Question />
+        <MCAnswer />
+        <TFAnswer />
+        <FillInTheBlankAnswer />
+
         <hr />
     </div>
   );
