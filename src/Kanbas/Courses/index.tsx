@@ -7,6 +7,7 @@ import Home from "./Home";
 import Assignments from "./Assignments";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Quizzes from "./Quizzes";
 
 function Courses({ courses }: { courses: any[] }) {
   const API_BASE = process.env.REACT_APP_API_BASE;
@@ -37,6 +38,7 @@ function Courses({ courses }: { courses: any[] }) {
             <Route path="/" element={<Navigate to="Home" />} />
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
+            <Route path="Quizzes" element={<Quizzes />} />
             <Route path="Piazza" element={<h1>Piazza</h1>} />
             <Route path="Assignments" element={<Assignments />} />
             <Route
