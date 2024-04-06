@@ -22,10 +22,10 @@ function Quizzes() {
     });
   };
 
-  // const handleUpdateQuiz = async () => {
-  //   const status = await client.updateQuiz(quiz);
-  //   dispatch(updateQuiz(module));
-  // };
+  const handleUpdateQuiz = async () => {
+    const status = await client.updateQuiz(quiz);
+    dispatch(updateQuiz(quiz));
+  };
 
   useEffect(() => {
     if (courseId) {
@@ -49,8 +49,8 @@ function Quizzes() {
     }
   };
 
-  const handlePublishQuiz = () => {
-    // TODO: what does this mean? isnt this for the top three buttons?
+  const handlePublishQuiz = (quizId: string) => {
+    // TODO: we have to update quiz to be unpublished
   };
 
   return (
@@ -122,7 +122,7 @@ function Quizzes() {
                       <Dropdown.Item onClick={() => handleDeleteQuiz(quiz.id)}>
                         Delete{" "}
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={handlePublishQuiz}>
+                      <Dropdown.Item onClick={() => handlePublishQuiz(quiz.id)}>
                         Publish
                       </Dropdown.Item>
                     </Dropdown.Menu>

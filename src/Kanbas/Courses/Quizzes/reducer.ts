@@ -1,8 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { quizzes } from "../../Database";
 
 const initialState = {
-  quizzes: quizzes,
+  quizzes: [] as {
+    id: string;
+    title: string;
+    availability: string;
+    published: boolean;
+    "due-date": string;
+    points: number;
+    "number-of-questions": number;
+    course: string;
+  }[],
   quiz: {
     id: "new id",
     title: "new title",
