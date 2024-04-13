@@ -149,7 +149,14 @@ function QuizDetailsEditor() {
       </div>
 
       <label htmlFor="text-fields-due"> Due Date : </label>
-      <input type="date" id="text-fields-due" value="2000-01-21" />
+      <input
+        type="date"
+        id="text-fields-due"
+        value="2000-01-21"
+        onChange={(e) =>
+          dispatch(setQuiz({ ...quiz, "due-date": e.target.value }))
+        }
+      />
 
       <label htmlFor="text-fields-available"> Available Date: </label>
       <input type="date" id="text-fields-available" value="2000-01-21" />
@@ -159,6 +166,26 @@ function QuizDetailsEditor() {
 
       <label htmlFor="text-fields-until"> Until: </label>
       <input type="date" id="text-fields-until" value="2000-01-21" />
+
+      <hr />
+      <div className="row">
+        <div>
+          <input
+            type="checkbox"
+            value="Text Entry"
+            name="text-entry"
+            id="chkbox-text-entry"
+          />
+          <label> Online Entry Options</label>
+        </div>
+
+        <br />
+        <div>
+          <button> Cancel </button>
+          <button> Save </button>
+          <button> Save/Publish </button>
+        </div>
+      </div>
     </div>
   );
 }
