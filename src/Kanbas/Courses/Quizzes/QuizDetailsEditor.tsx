@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addQuiz, deleteQuiz, updateQuiz, setQuiz } from "./reducer";
 import { KanbasState } from "../../store";
 import Dropdown from "react-bootstrap/Dropdown";
+import * as client from "./client";
 import {
   FaRegUserCircle,
   FaTachometerAlt,
@@ -35,6 +36,23 @@ function QuizDetailsEditor() {
     { label: "Help", icon: <FaQuestionCircle className="fs-2" /> },
   ];
   const { pathname } = useLocation();
+  const handleAddQuiz = () => {
+    if (courseId) {
+      client.createQuiz(courseId, quiz).then((quiz) => {
+        dispatch(addQuiz(quiz));
+      });
+    }
+  };
+
+  const handlePublishQuiz = () => {
+    if (courseId) {
+      client.createQuiz(courseId, quiz).then((quiz) => {
+        dispatch(setQuiz({ ...quiz, published: true }));
+        dispatch(addQuiz(quiz));
+      });
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <input
@@ -181,9 +199,20 @@ function QuizDetailsEditor() {
 
         <br />
         <div>
-          <button> Cancel </button>
-          <button> Save </button>
-          <button> Save/Publish </button>
+          <button>
+            {" "}
+            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>Cancel</Link>{" "}
+          </button>
+          <button onClick={() => handleAddQuiz()}>
+            {" "}
+            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>Save</Link>{" "}
+          </button>
+          <button onClick={() => handlePublishQuiz()}>
+            {" "}
+            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>
+              Save/Publish
+            </Link>{" "}
+          </button>
         </div>
       </div>
     </div>
