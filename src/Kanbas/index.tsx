@@ -2,14 +2,10 @@ import KanbasNavigation from "./Navigation";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Courses from "./Courses";
-import { courses as dbCourses } from "./Database";
 import { useState, useEffect } from "react";
 import store from "./store";
 import { Provider } from "react-redux";
 import axios from "axios";
-import Quizzes from "./Courses/Quizzes/Editor";
-import Questions from "./Courses/Quizzes/Editor/Questions";
-import Details from "./Courses/Quizzes/Editor/Details";
 const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Kanbas() {
@@ -78,10 +74,6 @@ function Kanbas() {
               path="Courses/:courseId/*"
               element={<Courses courses={courses} />}
             />
-            <Route path="Courses/:courseId/Quizzes" element={<Quizzes />} />
-            <Route path="Courses/:courseId/Quizzes/Editor/Details" element={<Details />} />
-                <Route path="Courses/:courseId/Quizzes/Editor/Questions" element={<Questions />} />
-        
           </Routes>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Nav from "../Nav";
 
 function Details() {
   const { pathname } = useLocation();

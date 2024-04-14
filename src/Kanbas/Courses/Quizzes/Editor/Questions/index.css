@@ -1,0 +1,23 @@
+.quiz-btn {
+    font-size : 15px;
+    padding: 5px;
+    border : 1px solid grey;
+    border-radius: 3px;
+    background-color: #ecedee;
+    color: black;
+    display: block;
+    margin: 5px;
+    text-align: center;
+}
+
+.quiz-btn-danger {
+    font-size : 15px;
+    padding: 5px;
+    border : 1px solid grey;
+    border-radius: 5px;
+    background-color: red;
+    color: white;
+    display: block;
+    margin: 5px;
+    text-align: center;
+}
