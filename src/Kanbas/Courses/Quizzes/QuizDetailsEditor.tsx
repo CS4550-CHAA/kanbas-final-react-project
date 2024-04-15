@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.css";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,6 +16,7 @@ import {
   FaTv,
   FaShareSquare,
   FaQuestionCircle,
+  FaTimes,
 } from "react-icons/fa";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
@@ -24,24 +25,17 @@ function QuizDetailsEditor() {
   );
   const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
   const dispatch = useDispatch();
-  const links2 = [
-    { label: "Home", icon: <FaRegUserCircle className="fs-2" /> },
-    { label: "Modules", icon: <FaTachometerAlt className="fs-2" /> },
-    { label: "Piazza", icon: <FaBook className="fs-2" /> },
-    { label: "Zoom", icon: <FaRegCalendarAlt className="fs-2" /> },
-    { label: "Assignments", icon: <FaEnvelope className="fs-2" /> },
-    { label: "Quizzes", icon: <FaClock className="fs-2" /> },
-    { label: "Grades", icon: <FaTv className="fs-2" /> },
-    { label: "People", icon: <FaShareSquare className="fs-2" /> },
-    { label: "Help", icon: <FaQuestionCircle className="fs-2" /> },
-  ];
-  const { pathname } = useLocation();
   const handleAddQuiz = () => {
     if (courseId) {
       client.createQuiz(courseId, quiz).then((quiz) => {
         dispatch(addQuiz(quiz));
       });
     }
+  };
+  const handleDeleteQuiz = (quizId: string) => {
+    client.deleteQuiz(quizId).then((status) => {
+      dispatch(deleteQuiz(quizId));
+    });
   };
 
   const handlePublishQuiz = () => {
@@ -52,11 +46,13 @@ function QuizDetailsEditor() {
       });
     }
   };
+  const [selectedQuizType, setSelectedQuizType] = useState("Graded Quiz");
+  const [assignmentGroup, setAssignmentGroup] = useState("Quizzes");
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <input
-        value="Unnamed Quiz"
+        value={quiz.title}
         onChange={(e) => dispatch(setQuiz({ ...quiz, title: e.target.value }))}
       />
       <br />
@@ -68,57 +64,48 @@ function QuizDetailsEditor() {
           dispatch(setQuiz({ ...quiz, instructions: e.target.value }))
         }
       />
-      {/* <div>
-        <label htmlFor="quiz-type"></label>
-        <select id="quiz-type">
-          <option selectedValue="GradedQuiz">Graded Quiz</option>
-          <option>Practice Quiz</option>
-          <option>Graded Quiz</option>
-        </select>
-      </div> */}
-      <div className="dropdown">
-        <button
-          className="btn btn-dark dropdown-toggle float-left"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          hi
-        </button>
-        <ul className="dropdown-menu bar">
-          <li key="0" className="">
-            Graded Quiz
-          </li>
-          <li>Practice Quiz</li>
-          <li>Graded Survey</li>
-          <li>Ungraded Survey</li>
-        </ul>
-      </div>
-      {/* this doesnt work so ill use checkbox instead for now
-    <Dropdown>
-      <Dropdown.Toggle
-        className="quizzesButton btn btn-secondary"
-        variant="secondary"
-        id="dropdown-basic"
-      ></Dropdown.Toggle>
 
-      <Dropdown.Menu>
-        <Dropdown.Item
-          onClick={(e) => dispatch(setQuiz({ ...quiz, type: e.target.value }))}
-        >
-          Graded Quiz
-        </Dropdown.Item>
-        <Dropdown.Item onClick={handleDeleteQuiz}>Practice Quiz</Dropdown.Item>
-        <Dropdown.Item onClick={handlePublishQuiz}>Publish</Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown> */}
-      {/* <input type="checkbox">
-      value={quiz.shuffle}
-      onChange={(e) =>
-        dispatch(setQuiz({ ...quiz, shuffle: e.target.value }))
-      }{" "}
-    </input> */}
+      <label htmlFor="quiz-type">Quiz Type</label>
+      <Dropdown>
+        <Dropdown.Toggle variant="dark" id="dropdown-basic">
+          {selectedQuizType}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => setSelectedQuizType("Graded Quiz")}>
+            Graded Quiz
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setSelectedQuizType("Practice Quiz")}>
+            Practice Quiz
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setSelectedQuizType("Graded Survey")}>
+            Graded Survey
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setSelectedQuizType("Ungraded Survey")}>
+            Ungraded Survey
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
       <br />
+      <label htmlFor="quiz-type">Assignment Group</label>
+      <Dropdown>
+        <Dropdown.Toggle variant="dark" id="dropdown-basic">
+          {assignmentGroup}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => setAssignmentGroup("Quizzes")}>
+            Quizzes
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setAssignmentGroup("Exams")}>
+            Exams
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setAssignmentGroup("Assignments")}>
+            Assignments
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => setAssignmentGroup("Project")}>
+            Project
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
       <div>
         {" "}
         <input type="checkbox" value="Shuffle Answers" id="shuffle" />
@@ -199,7 +186,9 @@ function QuizDetailsEditor() {
 
         <br />
         <div>
-          <button>
+          <button
+          //delete quiz here?
+          >
             {" "}
             <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>Cancel</Link>{" "}
           </button>
