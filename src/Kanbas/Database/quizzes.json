@@ -1,0 +1,35 @@
+[
+  {
+    "course_id": 1,
+    "quiz_id": 1,
+    "_id": 1,
+    "title": "Question title 1 ",
+    "quiz_type": "Multiple Choice",
+    "question": "How much is 2+2?",
+    "choices": ["1", "2", "3", "4"],
+    "correctChoice": ["4"],
+    "points": 5
+  },
+  {
+    "course_id": 1,
+    "quiz_id": 1,
+    "_id": 2,
+    "title": "Question title 2 ",
+    "quiz_type": "True/False",
+    "question": "Is 2 an integer?",
+    "choices": ["True", "False"],
+    "correctChoice": ["True"],
+    "points": 5
+  },
+  {
+    "course_id": 1,
+    "quiz_id": 1,
+    "_id": 3,
+    "title": "Question title 3 ",
+    "quiz_type": "Fill In The Blanks",
+    "question": "The Sum of 2 + 2 is  ______.",
+    "choices": ["4", "2", "5"],
+    "correctChoice": ["4"],
+    "points": 5
+  }
+]
