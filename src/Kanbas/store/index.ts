@@ -6,9 +6,12 @@ export interface KanbasState {
     module: any;
   };
 }
+
+
 const store = configureStore({
   reducer: {
     modulesReducer,
+    // quizzesReducer
   },
 });
 
