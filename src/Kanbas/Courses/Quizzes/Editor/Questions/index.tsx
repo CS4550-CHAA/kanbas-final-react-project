@@ -42,7 +42,7 @@ function Questions() {
                 <button className="quiz-btn-danger" type="button">Save</button>
             </div >
         </div>
-        {/*<Question />*/}
+        <Question />
         {/*<MCAnswer />*/}
         {/*<TFAnswer />*/}
         {/*<FillInTheBlankAnswer />*/}
