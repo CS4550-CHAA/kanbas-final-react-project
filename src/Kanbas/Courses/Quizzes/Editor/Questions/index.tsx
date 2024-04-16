@@ -4,7 +4,7 @@ import './index.css';
 import Question from "./Question";
 import {IoSearch} from "react-icons/io5";
 import {Card, CardBody, CardHeader, HStack, Text} from "@chakra-ui/react";
-import * as db from "../../../../Database";
+import { quizzes } from "../../../../Database";
 
 function Questions() {
   const { pathname } = useLocation();
