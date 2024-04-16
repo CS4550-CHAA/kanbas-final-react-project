@@ -1,8 +1,14 @@
 import { Box, HStack, Flex, Input, Text } from '@chakra-ui/react'
-import { Editor } from '@tinymce/tinymce-react';
 import { useState } from 'react';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons'
+import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
+
 function Question() {
+    const [html, setHtml] = useState('my <b>HTML</b>');
+
+    function onChange(e: any) {
+        setHtml(e.target.value);
+    }
     const questionExample = {
         name: 'Question Title',
         question: 'This is the question',
@@ -48,20 +54,22 @@ function Question() {
                 <Text>Enter your question text, then indicate the correct answer.</Text>
 
                 <Text fontSize='xl'><b>Question:</b></Text>
-                <Editor
-                    apiKey='91iov1c2w4sqvg05ldeofgsfdb3eo5rouvuv90u2ekhr5l8f'
-                    init={{
-                        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
-                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-                        tinycomments_mode: 'embedded',
-                        tinycomments_author: 'Author name',
-                        mergetags_list: [
-                            { value: 'First.Name', title: 'First Name' },
-                            { value: 'Email', title: 'Email' },
-                        ],
-                    }}
-                    initialValue="Welcome to TinyMCE!"
-                />
+                <EditorProvider>
+                    <Editor value={html} onChange={onChange}>
+                        <Toolbar>
+                            <BtnUndo />
+                            <BtnRedo />
+                            <BtnStrikeThrough />
+                            <BtnBold />
+                            <BtnItalic />
+                            <BtnBulletList />
+                            <BtnNumberedList />
+                            <BtnLink />
+                            <BtnStyles />
+                            <BtnClearFormatting />
+                        </Toolbar>
+                    </Editor>
+                </EditorProvider>
                 <Text fontSize='xl' style={{ marginTop: '10px' }}><b>Answers:</b></Text>
                 {question.answers.map((answer: any, index: number) => {
                     let textColor = '';
