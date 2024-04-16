@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import {Link, useLocation, useParams} from "react-router-dom";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import './index.css';
 import Question from "./Question";
-import MCAnswer from "./MCAnswer";
-import TFAnswer from "./TFAnswer";
-import FillInTheBlankAnswer from "./FillInTheBlankAnswer";
-import Nav from "../Nav";
 import {IoSearch} from "react-icons/io5";
-import {Box, Card, CardBody, CardHeader, Heading, HStack, Input, Text, Stack, StackDivider} from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, HStack, Text } from "@chakra-ui/react";
 // import { quizzes } from "../../../../Database";
 
 
