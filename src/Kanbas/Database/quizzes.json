@@ -1,35 +1,102 @@
 [
   {
-    "course_id": 1,
-    "quiz_id": 1,
-    "_id": 1,
-    "title": "Question title 1 ",
-    "quiz_type": "Multiple Choice",
-    "question": "How much is 2+2?",
-    "choices": ["1", "2", "3", "4"],
-    "correctChoice": ["4"],
-    "points": 5
+    "id": "Q1",
+    "title": "Q1 - HTML",
+    "availability": "Closed",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 29,
+    "number-of-questions": 11,
+    "course": "RS101"
   },
   {
-    "course_id": 1,
-    "quiz_id": 1,
-    "_id": 2,
-    "title": "Question title 2 ",
-    "quiz_type": "True/False",
-    "question": "Is 2 an integer?",
-    "choices": ["True", "False"],
-    "correctChoice": ["True"],
-    "points": 5
+    "id": "Q1",
+    "title": "Q2 - CSS",
+    "availability": "Not Available until",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 32,
+    "number-of-questions": 7,
+    "course": "RS101"
   },
   {
-    "course_id": 1,
-    "quiz_id": 1,
-    "_id": 3,
-    "title": "Question title 3 ",
-    "quiz_type": "Fill In The Blanks",
-    "question": "The Sum of 2 + 2 is  ______.",
-    "choices": ["4", "2", "5"],
-    "correctChoice": ["4"],
-    "points": 5
+    "id": "Q1",
+    "title": "EXAM 1 FA 23",
+    "availability": "Closed",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 113,
+    "number-of-questions": 20,
+    "course": "RS101"
+  },
+  {
+    "id": "Q1",
+    "title": "Q3 - JS, ES6",
+    "availability": "Available",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 38,
+    "number-of-questions": 13,
+    "course": "RS102"
+  },
+  {
+    "id": "Q1",
+    "title": "Q3",
+    "availability": "Closed",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 31,
+    "number-of-questions": 8,
+    "course": "RS102"
+  },
+  {
+    "id": "Q1",
+    "title": "Q4 - NODE",
+    "availability": "Not Available until",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 25,
+    "number-of-questions": 4,
+    "course": "RS102"
+  },
+  {
+    "id": "Q1",
+    "title": "Q5 - MONGO",
+    "availability": "Available",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 38,
+    "number-of-questions": 10,
+    "course": "RS103"
+  },
+  {
+    "id": "Q1",
+    "title": "EXAM 2 FA23",
+    "availability": "Closed",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 104,
+    "number-of-questions": 18,
+    "course": "RS103"
+  },
+  {
+    "id": "Q1",
+    "title": "Q7",
+    "availability": "Closed",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 25,
+    "number-of-questions": 4,
+    "course": "RS103"
+  },
+  {
+    "id": "Q1",
+    "title": "Q8",
+    "availability": "Available",
+    "published": false,
+    "due-date": "March 22 at 11:59 PM",
+    "points": 25,
+    "number-of-questions": 4,
+    "course": "RS103"
   }
 ]
