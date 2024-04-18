@@ -11,9 +11,9 @@ import {
   updateQuiz,
   setQuiz,
   setQuizzes,
-} from "./reducer";
-import * as client from "./client";
-function Quizzes() {
+} from "./Editor/Details/reducer";
+import * as client from "./Editor/Details/client";
+function QuizList() {
   const { courseId } = useParams();
 
   const handleDeleteQuiz = (quizId: string) => {
@@ -136,4 +136,4 @@ function Quizzes() {
     </>
   );
 }
-export default Quizzes;
+export default QuizList;
