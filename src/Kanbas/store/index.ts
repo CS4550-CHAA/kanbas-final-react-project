@@ -11,6 +11,8 @@ export interface KanbasState {
     quiz: any;
   };
 }
+
+
 const store = configureStore({
   reducer: {
     modulesReducer,

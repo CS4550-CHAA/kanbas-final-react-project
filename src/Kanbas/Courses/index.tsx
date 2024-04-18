@@ -7,8 +7,11 @@ import Home from "./Home";
 import Assignments from "./Assignments";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Quizzes from "./Quizzes";
+import QuizList from "./Quizzes";
 import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
+import Quizzes from "./Quizzes/Editor";
+import Details from "./Quizzes/Editor/Details";
+import Questions from "./Quizzes/Editor/Questions";
 
 function Courses({ courses }: { courses: any[] }) {
   const API_BASE = process.env.REACT_APP_API_BASE;
@@ -48,6 +51,10 @@ function Courses({ courses }: { courses: any[] }) {
               element={<h1>Assignment Editor</h1>}
             />
             <Route path="Grades" element={<h1>Grades</h1>} />
+            {/*TODO currently set to Quizzes/Editor, have to change to Quizzes (create index.tsx for Quiz)*/}
+            <Route path="Quizzes/*" element={<Quizzes/>} />
+            {/*<Route path="Quizzes/Editor/Details" element={<Details />} />*/}
+            {/*<Route path="Courses/:courseId/Quizzes/Editor/Questions" element={<Questions />} />*/}
           </Routes>
         </div>
       </div>
