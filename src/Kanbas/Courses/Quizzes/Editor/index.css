@@ -1,0 +1,11 @@
+.quiz-btn {
+    font-size : 15px;
+    border-style: solid;
+    border-radius: 20px;
+    background-color: #ecedee;
+    color: black;
+    border-color: grey;
+    display: block;
+    margin: 10px;
+    text-align: center;
+}
