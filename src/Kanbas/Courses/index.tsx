@@ -8,7 +8,6 @@ import Assignments from "./Assignments";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import QuizList from "./Quizzes";
-import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
 import Quizzes from "./Quizzes/Editor";
 import Details from "./Quizzes/Editor/Details";
 import Questions from "./Quizzes/Editor/Questions";
@@ -42,8 +41,8 @@ function Courses({ courses }: { courses: any[] }) {
             <Route path="/" element={<Navigate to="Home" />} />
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
-            <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:quizId" element={<QuizDetailsEditor />} />
+            <Route path="Quizzes" element={<QuizList />} />
+            <Route path="Quizzes/:quizId" element={<Quizzes />} />
             <Route path="Piazza" element={<h1>Piazza</h1>} />
             <Route path="Assignments" element={<Assignments />} />
             <Route
@@ -52,9 +51,9 @@ function Courses({ courses }: { courses: any[] }) {
             />
             <Route path="Grades" element={<h1>Grades</h1>} />
             {/*TODO currently set to Quizzes/Editor, have to change to Quizzes (create index.tsx for Quiz)*/}
-            <Route path="Quizzes/*" element={<Quizzes/>} />
-            {/*<Route path="Quizzes/Editor/Details" element={<Details />} />*/}
-            {/*<Route path="Courses/:courseId/Quizzes/Editor/Questions" element={<Questions />} />*/}
+            {/* <Route path="Quizzes/*" element={<Quizzes />} /> */}
+            <Route path="Quizzes/Editor/Details" element={<Details />} />
+            <Route path="/Quizzes/Editor/Questions" element={<Questions />} />
           </Routes>
         </div>
       </div>
