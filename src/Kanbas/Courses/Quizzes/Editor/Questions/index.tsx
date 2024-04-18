@@ -4,7 +4,7 @@ import './index.css';
 import Question from "./Question";
 import {IoSearch} from "react-icons/io5";
 import {Card, CardBody, CardHeader, HStack, Text} from "@chakra-ui/react";
-import { quizzes } from "../../../../Database";
+import { BsTrash3Fill, BsPencil } from "react-icons/bs";
 
 function Questions() {
   const { pathname } = useLocation();
@@ -32,8 +32,12 @@ function Questions() {
             title: "Question title 1 ",
             quiz_type: "Multiple Choice",
             question: "How much is 2+2?",
-            choices: ["1", "2", "3", "4"],
-            correctChoice: ["4"],
+            answers: [
+                {answer: '1', correct: false},
+                {answer: '2', correct: false},
+                {answer: '3', correct: false},
+                {answer: '4', correct: true},
+            ],
             points: 5,
         },
         {
@@ -43,8 +47,10 @@ function Questions() {
             title: "Question title 2 ",
             quiz_type: "True/False",
             question: "Is 2 an integer?",
-            choices: ["True", "False"],
-            correctChoice: ["True"],
+            answers: [
+                {answer: 'True', correct: true},
+                {answer: 'False', correct: false},
+            ],
             points: 5,
         },
         {
@@ -54,8 +60,11 @@ function Questions() {
             title: "Question title 3 ",
             quiz_type: "Fill In The Blanks",
             question: "The Sum of 2 + 2 is  ______.",
-            choices: ["4", "2", "5"], //or blanks?
-            correctChoice: ["4"],
+            answers: [
+                {answer: '4', correct: true},
+                {answer: '2', correct: true},
+                {answer: '5', correct: true},
+            ],
             points: 5,
         }
     ]
@@ -70,7 +79,16 @@ function Questions() {
                             <CardHeader backgroundColor='lightGrey'>
                                 <HStack justifyContent='space-between' alignItems='center'
                                         style={{width: '100%', padding: "10px", paddingBottom: "0px"}}>
-                                    <Text> Question</Text>
+                                    <HStack>
+                                        <Text> Question</Text>
+                                        <button className="quiz-btn" type="button">
+                                            <BsPencil />
+                                        </button>
+                                        <button className="quiz-btn" type="button">
+                                            <BsTrash3Fill />
+                                        </button>
+                                    </HStack>
+                                    
                                     <div style={{display: 'flex', alignItems: 'center'}}>
                                         <Text>{question.points} pts</Text>
                                     </div>

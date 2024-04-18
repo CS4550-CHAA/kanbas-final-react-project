@@ -1,6 +1,6 @@
 import { Box, HStack, Flex, Input, Text } from '@chakra-ui/react'
 import { useState } from 'react';
-import { EditIcon, DeleteIcon } from '@chakra-ui/icons'
+import { BsPencil, BsTrash3Fill } from 'react-icons/bs';
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
 
 function Question() {
@@ -106,8 +106,8 @@ function Question() {
                         <HStack key={index}>
                             <Text color={textColor}>{labelText}</Text>
                             <input value={answer.answer} />
-                            <button className="quiz-btn" type="button"><EditIcon /></button>
-                            <button className="quiz-btn" type="button"><DeleteIcon /></button>
+                            <button className="quiz-btn" type="button"><BsPencil /></button>
+                            <button className="quiz-btn" type="button"><BsTrash3Fill /></button>
                         </HStack>
                     );
                 })}
