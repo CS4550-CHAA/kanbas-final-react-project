@@ -17,6 +17,9 @@ import {
   FaShareSquare,
   FaQuestionCircle,
   FaTimes,
+  FaChevronDown,
+  FaPen,
+  FaEllipsisV,
 } from "react-icons/fa";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
@@ -58,12 +61,69 @@ function QuizDetailsEditor() {
       <br />
       <p> Quiz Instructions: </p>
       {/* TODO: add the editor bar for instructions  */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingBottom: "15px",
+        }}
+      >
+        <div>
+          <label style={{ paddingRight: "50px" }}>Edit</label>
+          <label style={{ paddingRight: "50px" }}>View</label>
+          <label style={{ paddingRight: "50px" }}>Insert</label>
+          <label style={{ paddingRight: "50px" }}>Format</label>
+          <label style={{ paddingRight: "50px" }}>Tools</label>
+          <label style={{ paddingRight: "50px" }}>Table</label>
+        </div>
+        <label style={{ paddingRight: "50px" }}>100%</label>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <label style={{ paddingRight: "50px" }}>
+          12 pt <FaChevronDown />
+        </label>
+        <label style={{ paddingRight: "50px" }}>
+          Paragraph <FaChevronDown />
+        </label>
+        <label style={{ paddingRight: "50px" }}> | </label>
+        <label style={{ paddingRight: "50px" }}> B </label>
+        <label style={{ paddingRight: "50px" }}> I </label>
+        <label style={{ paddingRight: "50px" }}> U </label>
+        <label style={{ paddingRight: "50px" }}>
+          {" "}
+          A <FaChevronDown />{" "}
+        </label>
+        <label style={{ paddingRight: "50px" }}>
+          {" "}
+          <FaPen /> <FaChevronDown />{" "}
+        </label>
+        <label style={{ paddingRight: "50px" }}>
+          {" "}
+          T2 <FaChevronDown />{" "}
+        </label>
+        <label style={{ paddingRight: "50px" }}> | </label>
+        <label style={{ paddingRight: "50px" }}>
+          {" "}
+          <FaEllipsisV /> <FaChevronDown />{" "}
+        </label>
+      </div>
       <textarea
         value={quiz.instructions}
         onChange={(e) =>
           dispatch(setQuiz({ ...quiz, instructions: e.target.value }))
         }
       />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <label>p</label>
+      </div>
 
       <label htmlFor="quiz-type">Quiz Type</label>
       <Dropdown>
@@ -106,6 +166,7 @@ function QuizDetailsEditor() {
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
+      <h5>Options</h5>
       <div>
         {" "}
         <input type="checkbox" value="Shuffle Answers" id="shuffle" />
@@ -114,7 +175,7 @@ function QuizDetailsEditor() {
 
       {/* TODO: make the time limit and minutes in the same row  */}
       <div className="flex-row">
-        <div>
+        <div style={{ display: "flex", flexDirection: "row" }}>
           {" "}
           <input type="checkbox" value="Time Limit" id="time" />
           <label htmlFor="time">Time Limit</label>
@@ -174,34 +235,63 @@ function QuizDetailsEditor() {
 
       <hr />
       <div className="row">
-        <div>
-          <input
-            type="checkbox"
-            value="Text Entry"
-            name="text-entry"
-            id="chkbox-text-entry"
-          />
-          <label> Online Entry Options</label>
-        </div>
-
         <br />
-        <div>
-          <button
-          //delete quiz here?
-          >
-            {" "}
-            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>Cancel</Link>{" "}
-          </button>
-          <button onClick={() => handleAddQuiz()}>
-            {" "}
-            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>Save</Link>{" "}
-          </button>
-          <button onClick={() => handlePublishQuiz()}>
-            {" "}
-            <Link to={`/Kanbas/Courses/${courseId}/Quizzes/`}>
-              Save/Publish
-            </Link>{" "}
-          </button>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <input
+              type="checkbox"
+              value="Text Entry"
+              name="text-entry"
+              id="chkbox-text-entry"
+            />
+            <label> Notify users this quiz has changed </label>
+          </div>
+          <div>
+            <button
+              className="btn btn-light"
+              style={{ backgroundColor: "lightgray", marginRight: "10px" }}
+              //delete quiz here?
+            >
+              {" "}
+              <Link
+                to={`/Kanbas/Courses/${courseId}/Quizzes/`}
+                style={{ textDecoration: "none" }}
+              >
+                Cancel
+              </Link>{" "}
+            </button>
+            <button
+              onClick={() => handleAddQuiz()}
+              className="btn btn-light"
+              style={{ backgroundColor: "lightgray", marginRight: "10px" }}
+            >
+              {" "}
+              <Link
+                to={`/Kanbas/Courses/${courseId}/Quizzes/`}
+                style={{ textDecoration: "none" }}
+              >
+                Save & Publish
+              </Link>{" "}
+            </button>
+            <button
+              onClick={() => handlePublishQuiz()}
+              className="btn btn-danger"
+            >
+              {" "}
+              <Link
+                to={`/Kanbas/Courses/${courseId}/Quizzes/`}
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                Save
+              </Link>{" "}
+            </button>
+          </div>
         </div>
       </div>
     </div>
