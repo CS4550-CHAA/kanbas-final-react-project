@@ -5,7 +5,6 @@ import { FaPen } from "react-icons/fa";
 
 function QuizPreview() {
   const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
-  const dispatch = useDispatch();
   return (
     <div>
       <h1>{quiz.title}</h1>

@@ -43,13 +43,13 @@ function WorkingWithObjects() {
       <button onClick={fetchAssignment}>Fetch Assignment</button>
 
       <h4>Retrieving Objects</h4>
-      <a href="http://localhost:4001/a5/assignment">Get Assignment</a>
+      <a href="http://localhost:4000/a5/assignment">Get Assignment</a>
       <h4>Retrieving Properties</h4>
-      <a href="http://localhost:4001/a5/assignment/title">Get Title</a>
+      <a href="http://localhost:4000/a5/assignment/title">Get Title</a>
       <br />
-      <a href="http://localhost:4001/a5/module">Get Module</a>
+      <a href="http://localhost:4000/a5/module">Get Module</a>
       <br />
-      <a href="http://localhost:4001/a5/module/name">Get Module Name</a>
+      <a href="http://localhost:4000/a5/module/name">Get Module Name</a>
     </div>
   );
 }

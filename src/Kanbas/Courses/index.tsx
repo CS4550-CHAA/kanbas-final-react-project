@@ -11,6 +11,7 @@ import QuizList from "./Quizzes";
 import Quizzes from "./Quizzes/Editor";
 import Details from "./Quizzes/Editor/Details";
 import Questions from "./Quizzes/Editor/Questions";
+import QuizDetails from "./Quizzes/QuizDetails";
 
 function Courses({ courses }: { courses: any[] }) {
   const API_BASE = process.env.REACT_APP_API_BASE;
@@ -42,7 +43,8 @@ function Courses({ courses }: { courses: any[] }) {
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
             <Route path="Quizzes" element={<QuizList />} />
-            <Route path="Quizzes/:quizId" element={<Quizzes />} />
+            <Route path="Quizzes/:quizId" element={<QuizDetails />} />
+            <Route path="QuizzesEditor/:quizId" element={<Quizzes />} />
             <Route path="Piazza" element={<h1>Piazza</h1>} />
             <Route path="Assignments" element={<Assignments />} />
             <Route

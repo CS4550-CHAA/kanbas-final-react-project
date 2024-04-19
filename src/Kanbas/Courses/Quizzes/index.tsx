@@ -1,57 +1,52 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./index.css";
 import { FaCheckCircle, FaEllipsisV, FaPlusCircle } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
-import { KanbasState } from "../../store";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addQuiz,
-  deleteQuiz,
-  updateQuiz,
-  setQuiz,
-  setQuizzes,
-} from "./Editor/Details/reducer";
-import * as client from "./Editor/Details/client";
+import * as client from "./client";
+import { Quiz } from "./client";
 function QuizList() {
   const { courseId } = useParams();
+  const { quizId } = useParams();
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quiz, setQuiz] = useState<Quiz>({
+    id: "",
+    title: "Quiz",
+    availability: "",
+    published: false,
+    dueDate: new Date(0),
+    points: 0,
+    numberOfQuestions: 0,
+    course: "",
+  });
 
-  const handleDeleteQuiz = (quizId: string) => {
-    client.deleteQuiz(quizId).then((status) => {
-      dispatch(deleteQuiz(quizId));
-    });
+  const createQuiz = async () => {
+    try {
+      const newQuiz = await client.createQuiz(quiz);
+      setQuizzes([newQuiz, ...quizzes]);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleUpdateQuiz = async () => {
-    const status = await client.updateQuiz(quiz);
-    dispatch(updateQuiz(quiz));
+  const deleteQuiz = async (quiz: Quiz) => {
+    try {
+      await client.deleteQuiz(quiz);
+      setQuizzes(quizzes.filter((q) => q.id !== quiz.id));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
+  const fetchQuizzes = async () => {
+    const quizzes = await client.findAllQuizzes();
+    setQuizzes(quizzes);
+  };
   useEffect(() => {
-    if (courseId) {
-      client
-        .findQuizzesForCourse(courseId)
-        .then((quizzes) => dispatch(setQuizzes(quizzes)));
-    }
-  }, [courseId]);
+    fetchQuizzes();
+  }, []);
 
-  const quizList = useSelector(
-    (state: KanbasState) => state.quizzesReducer.quizzes
-  );
-  const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
-  const dispatch = useDispatch();
-
-  const handleAddQuiz = () => {
-    if (courseId) {
-      client.createQuiz(courseId, quiz).then((quiz) => {
-        dispatch(addQuiz(quiz));
-      });
-    }
-  };
-
-  const handlePublishQuiz = (quizId: string) => {
-    // TODO: we have to update quiz to be unpublished
-  };
+  console.log(quizzes);
 
   return (
     <>
@@ -65,7 +60,7 @@ function QuizList() {
         <button
           type="button"
           className="quizzesButton btn btn-danger"
-          onClick={() => handleAddQuiz()}
+          onClick={() => createQuiz()}
         >
           <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quiz.id}`}>
             + Quiz
@@ -79,29 +74,37 @@ function QuizList() {
             <FaEllipsisV className="me-2" /> QUIZZES
             <span className="float-end">
               <FaCheckCircle className="text-success" />
+
               <FaPlusCircle className="ms-2" />
+
               <FaEllipsisV className="ms-2" />
             </span>
           </div>
+
           <ul className="list-group">
-            {quizList.map((quiz) => (
+            {quizzes.map((quiz: Quiz) => (
               <li className="list-group-item">
                 <FaEllipsisV className="me-2" />
                 <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quiz.id}`}>
                   {quiz.title}
                 </Link>
+
                 <div className="row">
                   <div className="col-2">
                     <p className="multipleModules">{quiz.availability}</p>
                   </div>
+
                   <div className="col">
-                    <p>Due {quiz["due-date"]}</p>
-                    <p>{quiz.points} points</p>
-                    <p>{quiz["number-of-questions"]} questions</p>
+                    <p>Due {quiz.dueDate.toString()}</p>
+                    <p>{String(quiz.points)} points</p>
+
+                    <p>{String(quiz.numberOfQuestions)} questions</p>
                   </div>
                 </div>
+
                 <span className="float-end">
                   <FaCheckCircle className="text-success" />
+
                   <Dropdown>
                     <Dropdown.Toggle
                       className="quizzesButton btn btn-secondary"
@@ -119,10 +122,12 @@ function QuizList() {
                           Edit
                         </Link>
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleDeleteQuiz(quiz.id)}>
-                        Delete{" "}
+
+                      <Dropdown.Item onClick={() => deleteQuiz(quiz)}>
+                        Delete
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handlePublishQuiz(quiz.id)}>
+
+                      <Dropdown.Item onClick={() => deleteQuiz(quiz)}>
                         Publish
                       </Dropdown.Item>
                     </Dropdown.Menu>
