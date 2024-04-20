@@ -11,13 +11,25 @@ function QuizList() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quiz, setQuiz] = useState<Quiz>({
     id: "",
-    title: "Quiz",
+    title: "",
     availability: "",
+    description: "",
     published: false,
     dueDate: new Date(0),
-    points: 0,
     numberOfQuestions: 0,
     course: "",
+    quizType: "Graded Quiz",
+    assignmentGroup: "Quizzes",
+    shuffleAnswers: "Yes",
+    timeLimit: 20,
+    multipleAttempts: "No",
+    showCorrectAnswers: "",
+    accessCode: "",
+    oneQuestionAtATime: "Yes",
+    webCamRequired: "No",
+    lockQuestionsAfterAnswering: "No",
+    availableDate: new Date(0),
+    untilDate: new Date(0),
   });
 
   const createQuiz = async () => {
@@ -38,12 +50,24 @@ function QuizList() {
     }
   };
 
-  const fetchQuizzes = async () => {
-    const quizzes = await client.findAllQuizzes();
-    setQuizzes(quizzes);
+  // const fetchQuizzes = async () => {
+  //   const quizzes = await client.findAllQuizzes();
+  //   setQuizzes(quizzes);
+  // };
+  // useEffect(() => {
+  //   fetchQuizzes();
+  // }, []);
+
+  const fetchQuizzesForCourse = async () => {
+    if (courseId) {
+      const quizzes = await client.findQuizzesForCourse(courseId);
+      console.log("quizzes" + quizzes);
+      setQuizzes(quizzes);
+    }
   };
   useEffect(() => {
-    fetchQuizzes();
+    console.log("courseid" + courseId);
+    fetchQuizzesForCourse();
   }, []);
 
   console.log(quizzes);
@@ -96,7 +120,7 @@ function QuizList() {
 
                   <div className="col">
                     <p>Due {quiz.dueDate.toString()}</p>
-                    <p>{String(quiz.points)} points</p>
+                    {/* <p>{String(quiz.points)} points</p> TODO: make this a sum of all question points*/}
 
                     <p>{String(quiz.numberOfQuestions)} questions</p>
                   </div>
