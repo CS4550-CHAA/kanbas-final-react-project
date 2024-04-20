@@ -54,7 +54,7 @@ function QuizDetails() {
         </button>
         <button>Preview</button>
         <button>
-          <Link to={`/Kanbas/Courses/${courseId}/QuizzesEditor/${quizId}`}>
+          <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor`}>
             <FaPen /> Edit
           </Link>
         </button>
