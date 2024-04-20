@@ -31,8 +31,8 @@ function Quizzes() {
           path="/"
           element={<Navigate to={`/Kanbas/Courses/${courseId}/Quizzes/`} />}
         /> */}
-        <Route path="/Editor/Questions" element={<Questions />} />
-        <Route path="/Editor/Details" element={<Details />} />
+        {/* <Route path=":quizId/Editor/Questions" element={<Questions />} />
+        <Route path=":quizId/Editor/Details" element={<Details />} /> */}
       </Routes>
     </div>
   );
