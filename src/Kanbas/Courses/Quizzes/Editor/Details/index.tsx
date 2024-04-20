@@ -1,62 +1,111 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./index.css";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addQuiz, deleteQuiz, updateQuiz, setQuiz } from "./reducer";
 import { KanbasState } from "../../../../store";
 import Dropdown from "react-bootstrap/Dropdown";
-import * as client from "./client";
-import {
-  FaRegUserCircle,
-  FaTachometerAlt,
-  FaBook,
-  FaRegCalendarAlt,
-  FaEnvelope,
-  FaClock,
-  FaTv,
-  FaShareSquare,
-  FaQuestionCircle,
-  FaTimes,
-  FaChevronDown,
-  FaPen,
-  FaEllipsisV,
-} from "react-icons/fa";
+import * as client from "../../client";
+import { Quiz } from "../../client";
+import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
+import { create } from "domain";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
-  const quizList = useSelector(
-    (state: KanbasState) => state.quizzesReducer.quizzes
-  );
-  const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
-  const dispatch = useDispatch();
-  const handleAddQuiz = () => {
-    if (courseId) {
-      client.createQuiz(courseId, quiz).then((quiz) => {
-        dispatch(addQuiz(quiz));
-      });
+  // const quizList = useSelector(
+  //   (state: KanbasState) => state.quizzesReducer.quizzes
+  // );
+  // const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
+  // const dispatch = useDispatch();
+  // const handleAddQuiz = () => {
+  //   if (courseId) {
+  //     client.createQuiz(courseId, quiz).then((quiz) => {
+  //       dispatch(addQuiz(quiz));
+  //     });
+  //   }
+  // };
+  // const handleDeleteQuiz = (quizId: string) => {
+  //   client.deleteQuiz(quizId).then((status) => {
+  //     dispatch(deleteQuiz(quizId));
+  //   });
+  // };
+
+  // const handlePublishQuiz = () => {
+  //   if (courseId) {
+  //     client.createQuiz(courseId, quiz).then((quiz) => {
+  //       dispatch(setQuiz({ ...quiz, published: true }));
+  //       dispatch(addQuiz(quiz));
+  //     });
+  //   }
+  // };
+  // const [selectedQuizType, setSelectedQuizType] = useState("Graded Quiz");
+  // const [assignmentGroup, setAssignmentGroup] = useState("Quizzes");
+
+  const { quizId } = useParams();
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quiz, setQuiz] = useState<Quiz>({
+    id: "",
+    title: "",
+    availability: "",
+    description: "",
+    published: false,
+    dueDate: new Date(0),
+    numberOfQuestions: 0,
+    course: "",
+    quizType: "Graded Quiz",
+    assignmentGroup: "Quizzes",
+    shuffleAnswers: "Yes",
+    timeLimit: 20,
+    multipleAttempts: "No",
+    showCorrectAnswers: "",
+    accessCode: "",
+    oneQuestionAtATime: "Yes",
+    webCamRequired: "No",
+    lockQuestionsAfterAnswering: "No",
+    availableDate: new Date(0),
+    untilDate: new Date(0),
+  });
+
+  const createQuiz = async () => {
+    try {
+      const newQuiz = await client.createQuiz(quiz);
+      setQuizzes([newQuiz, ...quizzes]);
+    } catch (err) {
+      console.log(err);
     }
-  };
-  const handleDeleteQuiz = (quizId: string) => {
-    client.deleteQuiz(quizId).then((status) => {
-      dispatch(deleteQuiz(quizId));
-    });
   };
 
-  const handlePublishQuiz = () => {
-    if (courseId) {
-      client.createQuiz(courseId, quiz).then((quiz) => {
-        dispatch(setQuiz({ ...quiz, published: true }));
-        dispatch(addQuiz(quiz));
-      });
+  const deleteQuiz = async (quiz: Quiz) => {
+    try {
+      await client.deleteQuiz(quiz);
+      setQuizzes(quizzes.filter((q) => q.id !== quiz.id));
+    } catch (err) {
+      console.log(err);
     }
   };
-  const [selectedQuizType, setSelectedQuizType] = useState("Graded Quiz");
-  const [assignmentGroup, setAssignmentGroup] = useState("Quizzes");
+
+  const fetchQuizzes = async () => {
+    const quizzes = await client.findAllQuizzes();
+    setQuizzes(quizzes);
+  };
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+  const updateQuiz = async () => {
+    const newQuiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
+
+  function publishQuiz(): void {
+    setQuiz({ ...quiz, published: true });
+    createQuiz();
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <input
-        value={quiz.title}
-        onChange={(e) => dispatch(setQuiz({ ...quiz, title: e.target.value }))}
+        value={quiz.title.toString()}
+        onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
       />
       <br />
       <p> Quiz Instructions: </p>
@@ -110,10 +159,8 @@ function QuizDetailsEditor() {
         </label>
       </div>
       <textarea
-        value={quiz.instructions}
-        onChange={(e) =>
-          dispatch(setQuiz({ ...quiz, instructions: e.target.value }))
-        }
+      // value={quiz.instructions} TODO: add this to schema
+      // onChange={updateQuiz}
       />
       <div
         style={{
@@ -128,9 +175,9 @@ function QuizDetailsEditor() {
       <label htmlFor="quiz-type">Quiz Type</label>
       <Dropdown>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
-          {selectedQuizType}
+          {/* {selectedQuizType} TODO: add to schema*/}
         </Dropdown.Toggle>
-        <Dropdown.Menu>
+        {/* <Dropdown.Menu>
           <Dropdown.Item onClick={() => setSelectedQuizType("Graded Quiz")}>
             Graded Quiz
           </Dropdown.Item>
@@ -143,15 +190,15 @@ function QuizDetailsEditor() {
           <Dropdown.Item onClick={() => setSelectedQuizType("Ungraded Survey")}>
             Ungraded Survey
           </Dropdown.Item>
-        </Dropdown.Menu>
+        </Dropdown.Menu> */}
       </Dropdown>
       <br />
       <label htmlFor="quiz-type">Assignment Group</label>
       <Dropdown>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
-          {assignmentGroup}
+          {/* {assignmentGroup} TODO: add to schema or hardcode*/}
         </Dropdown.Toggle>
-        <Dropdown.Menu>
+        {/* <Dropdown.Menu>
           <Dropdown.Item onClick={() => setAssignmentGroup("Quizzes")}>
             Quizzes
           </Dropdown.Item>
@@ -164,7 +211,7 @@ function QuizDetailsEditor() {
           <Dropdown.Item onClick={() => setAssignmentGroup("Project")}>
             Project
           </Dropdown.Item>
-        </Dropdown.Menu>
+        </Dropdown.Menu> */}
       </Dropdown>
       <h5>Options</h5>
       <div>
@@ -181,12 +228,12 @@ function QuizDetailsEditor() {
           <label htmlFor="time">Time Limit</label>
         </div>
 
-        <input
+        {/* TODO: add minutes <input
           type="number"
           onChange={(e) =>
             dispatch(setQuiz({ ...quiz, minutes: parseInt(e.target.value) }))
           }
-        />
+        /> */}
         <label>Minutes</label>
       </div>
 
@@ -218,9 +265,9 @@ function QuizDetailsEditor() {
       <input
         type="date"
         id="text-fields-due"
-        value="2000-01-21"
+        value={quiz.dueDate ? quiz.dueDate.toISOString().split("T")[0] : ""}
         onChange={(e) =>
-          dispatch(setQuiz({ ...quiz, "due-date": e.target.value }))
+          setQuiz({ ...quiz, dueDate: new Date(e.target.value) })
         }
       />
 
@@ -256,7 +303,7 @@ function QuizDetailsEditor() {
             <button
               className="btn btn-light"
               style={{ backgroundColor: "lightgray", marginRight: "10px" }}
-              //delete quiz here?
+              onClick={() => deleteQuiz(quiz)}
             >
               {" "}
               <Link
@@ -267,7 +314,7 @@ function QuizDetailsEditor() {
               </Link>{" "}
             </button>
             <button
-              onClick={() => handleAddQuiz()}
+              onClick={publishQuiz}
               className="btn btn-light"
               style={{ backgroundColor: "lightgray", marginRight: "10px" }}
             >
@@ -279,10 +326,7 @@ function QuizDetailsEditor() {
                 Save & Publish
               </Link>{" "}
             </button>
-            <button
-              onClick={() => handlePublishQuiz()}
-              className="btn btn-danger"
-            >
+            <button onClick={createQuiz} className="btn btn-danger">
               {" "}
               <Link
                 to={`/Kanbas/Courses/${courseId}/Quizzes/`}

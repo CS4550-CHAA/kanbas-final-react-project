@@ -16,13 +16,25 @@ function QuizDetails() {
   const { quizId } = useParams();
   const [quiz, setQuiz] = useState<Quiz>({
     id: "",
-    title: "Quiz",
+    title: "",
     availability: "",
+    description: "",
     published: false,
     dueDate: new Date(0),
-    points: 0,
     numberOfQuestions: 0,
     course: "",
+    quizType: "Graded Quiz",
+    assignmentGroup: "Quizzes",
+    shuffleAnswers: "Yes",
+    timeLimit: 20,
+    multipleAttempts: "No",
+    showCorrectAnswers: "",
+    accessCode: "",
+    oneQuestionAtATime: "Yes",
+    webCamRequired: "No",
+    lockQuestionsAfterAnswering: "No",
+    availableDate: new Date(0),
+    untilDate: new Date(0),
   });
 
   const getQuizById = async (id: any) => {
@@ -73,8 +85,8 @@ function QuizDetails() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {/* {quiz.type} TODO: add this into the database*/}
-          <p>{String(quiz.points)}</p>
+          {quiz.quizType}
+          {/* <p>{String(quiz.points)}</p> */}
           <label>QUIZZES</label>
           {/* {quiz.shuffleAnswers} TODO: add this into the database*/}
           {/* {quiz.timeLimit} TODO: add this into the database*/}
