@@ -1,37 +1,56 @@
 import { Box, HStack, Flex, Input, Text } from '@chakra-ui/react'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsPencil, BsTrash3Fill } from 'react-icons/bs';
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
+import { Question } from '../../questionClient';
+import * as answerClient from '../../answerClient';
 
-function Question() {
+interface QuestionProps {
+    question: Question
+    setQuestion: (value: Question) => void;
+    setNewQuestion: (value: boolean) => void;
+  }
+
+export default function QuestionEditor({ question, setQuestion, setNewQuestion }: QuestionProps)  {
     const [html, setHtml] = useState('my <b>HTML</b>');
+    const [answers, setAnswers] = useState([]);
 
     function onChange(e: any) {
         setHtml(e.target.value);
     }
-    const questionExample = {
-        name: 'Question Title',
-        question: 'This is the question',
-        type: 'Fill in The Blanks',
-        answers: [
-            {
-                answer: 'choice 1',
-                correct: true
-            },
-            {
-                answer: 'choice 2',
-                correct: false
-            },
-            {
-                answer: 'choice 3',
-                correct: false
-            },
-        ]
-    }
-    const [question, setQuestion] = useState(questionExample)
     const handleRadioChange = (index: number) => {
         // to be implemented
     };
+
+    const selectQuestion = async (questionId: string,) => {
+        const response = await questionClient.findQuestionById(questionId);
+        setQuestion(response.data);
+    };
+
+    const editAnswer = async () => {
+        const response = await answerClient.updateAnswer(answer)
+        setAnswers(...answers, response.data);
+    };
+
+    const deleteQuestion = async (questionId: string) => {
+        await questionClient.deleteQuestion(questionId);
+        setQuestions(questions.filter((q) => q._id !== questionId));
+    };
+
+    const createAnswer = async () => {
+        const response = await answerClient.createAnswer(answer);
+        setAnswers(answers.filter((a: answerClient.Answer) => a._id !== response.data._id));
+    };
+
+    useEffect(() => {
+        const fetchAnswersForQuestion = async () => {
+            if (question.id) {
+                const response = await answerClient.findAllAnswersForQuestion(question.id);
+                setAnswers(response.data);
+            }
+        };
+        fetchAnswersForQuestion();
+    }, [question.id])
 
     return (
         <>
@@ -71,7 +90,7 @@ function Question() {
                     </Editor>
                 </EditorProvider>
                 <Text fontSize='xl' style={{ marginTop: '10px' }}><b>Answers:</b></Text>
-                {question.answers.map((answer: any, index: number) => {
+                {answers && answers.map((answer: any) => {
                     let textColor = '';
                     let labelText = '';
 
@@ -87,23 +106,23 @@ function Question() {
                         case 'True or False':
                             textColor = answer.correct ? 'green' : 'red';
                             return (
-                                <HStack key={index}>
+                                <HStack key={answer._id}>
                                     <input
                                         type="radio"
-                                        name={`correctAnswer-${index}`}
+                                        name={`correctAnswer-${answer._id}`}
                                         value={answer.answer}
                                         checked={answer.correct}
-                                        onChange={() => handleRadioChange(index)}
+                                        onChange={() => handleRadioChange(answer._id)}
                                     />
                                     <Text color={textColor}>{answer.answer}</Text>
                                 </HStack>
                             );
                         default:
-                            return <Text key={index}>Invalid question type</Text>;
+                            return <Text key={answer._id}>Invalid question type</Text>;
                     }
 
                     return (
-                        <HStack key={index}>
+                        <HStack key={answer._id}>
                             <Text color={textColor}>{labelText}</Text>
                             <input value={answer.answer} />
                             <button className="quiz-btn" type="button"><BsPencil /></button>
@@ -112,18 +131,14 @@ function Question() {
                     );
                 })}
                 <Flex justifyContent="flex-end" mb={4}>
-                    <button className="quiz-btn" type="button">Add another answer</button>
+                    <button className="quiz-btn" type="button" onClick={createAnswer}>Add another answer</button>
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button">Cancel</button>
-                    <button className="quiz-btn" type="button">Update Question</button>
+                    <button className="quiz-btn" type="button" onClick={editAnswer}>Update Question</button>
                 </HStack>
             </Box>
         </>
     );
 
 }
-
-export default Question;
-
-
