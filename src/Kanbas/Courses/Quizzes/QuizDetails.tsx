@@ -86,17 +86,17 @@ function QuizDetails() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {quiz?.quizType}
-          10
-          {/* <p>{String(quiz.points)}</p> */}
+          <label>{quiz?.quizType}</label>
+          <label>10</label>
+          <label>{/* <p>{String(quiz.points)}</p> */}</label>
           <label>QUIZZES</label>
-          {quiz?.shuffleAnswers.toString()}
-          {quiz?.timeLimit.toString()}
-          {quiz?.multipleAttempts}
-          {quiz?.showCorrectAnswers}
-          {quiz?.oneQuestionAtATime}
-          {quiz?.webCamRequired}
-          {quiz?.lockQuestionsAfterAnswering}
+          <label>{quiz?.shuffleAnswers.toString()}</label>
+          <label>{quiz?.timeLimit.toString()}</label>
+          <label>{quiz?.multipleAttempts}</label>
+          <label>{quiz?.showCorrectAnswers}</label>
+          <label>{quiz?.oneQuestionAtATime}</label>
+          <label>{quiz?.webCamRequired}</label>
+          <label>{quiz?.lockQuestionsAfterAnswering}</label>
         </div>
       </div>
       <div

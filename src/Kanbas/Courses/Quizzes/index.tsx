@@ -132,7 +132,11 @@ function QuizList() {
                 </div>
 
                 <span className="float-end">
-                  <FaCheckCircle className="text-success" />
+                  {quiz.published ? (
+                    <FaCheckCircle className="text-success" />
+                  ) : (
+                    <FaTimesCircle className="text-danger" />
+                  )}
 
                   <Dropdown>
                     <Dropdown.Toggle
