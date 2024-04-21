@@ -35,12 +35,22 @@ function Questions() {
         const response = await questionClient.updateQuestion(question)
         setQuestion(response.data);
         setQuestions(questions.map((q) =>
-            (q._id === question._id ? question : q)));
+            (q.id === question.id ? question : q)));
+        setEditMode(false);
     };
 
     const deleteQuestion = async (questionId: string) => {
         await questionClient.deleteQuestion(questionId);
         setQuestions(questions.filter((q) => q.id !== questionId));
+    };
+
+    const createQuestion = async (question: any) => {
+        const questionId = "question" + Math.random().toString(16).slice(2)
+        const questionWithId = { ...question, id: questionId, quizId: quizId};
+        const response = await questionClient.createQuestion(questionWithId)
+        setQuestion(response.data);
+        setQuestions([...questions, question]);
+        setNewQuestion(false);
     };
 
     useEffect(() => {
@@ -64,7 +74,7 @@ function Questions() {
                                 <HStack justifyContent='space-between' alignItems='center'
                                     style={{ width: '100%', padding: "10px", paddingBottom: "0px" }}>
                                     <HStack>
-                                        <Text> Question</Text>
+                                        <Text>{question?.title}</Text>
                                         <button className="quiz-btn" type="button" onClick={() => selectQuestion(question.id)}>
                                             <BsPencil />
                                         </button>
@@ -92,21 +102,18 @@ function Questions() {
             </div>
             <hr />
 
-            {(editMode || newQuestion) && <QuestionEditor question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} />}
-
+            {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode}/>}
             <div className="d-grid gap-2 d-md-flex justify-content-between">
                 <label>
                     <input type="checkbox" />
                     Notify users that this quiz has changed
                 </label>
                 <div className="d-grid d-md-flex float-end">
-                    <button className="quiz-btn" type="button">Cancel</button>
-                    <button className="quiz-btn" type="button">Save & Publish</button>
-                    {/*onClick : saves the edits*/}
-                    <button className="quiz-btn-danger" type="button">Save</button>
+                    <button className="quiz-btn" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>
+                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Save & Publish</button>
+                    <button className="quiz-btn-danger" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Save</button>
                 </div>
             </div>
-
 
             <hr />
         </div>

@@ -9,14 +9,15 @@ interface QuestionProps {
     question: Question
     setQuestion: (value: Question) => void;
     setNewQuestion: (value: boolean) => void;
+    editQuestion: (value: any) => void;
+    setEditMode: (value: boolean) => void;
+    createQuestion: (value: any) => void;
+    editMode: boolean;
 }
 
-export default function QuestionEditor({ question, setQuestion, setNewQuestion }: QuestionProps) {
+export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode }: QuestionProps) {
     const [answers, setAnswers] = useState([]);
 
-    function onChange(e: any) {
-        setQuestion({...question, question: e.target.value});
-    }
     const handleRadioChange = (index: number) => {
         // to be implemented
     };
@@ -43,20 +44,20 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
 
     useEffect(() => {
         const fetchAnswersForQuestion = async () => {
-            if (question.id) {
+            if (question && question.id) {
             const response = await answerClient.findAllAnswersForQuestion(question.id);
             setAnswers(response);
             }
         };
         fetchAnswersForQuestion();
-    }, [question.id])
+    }, [question])
 
     return (
         <>
             <Box className="d-grid" style={{ border: '1px solid grey', margin: '60px', padding: '30px' }}>
                 <HStack justifyContent='space-between' alignItems='center' style={{ width: '100%' }}>
                     <div>
-                        <Input variant='outline' value={question ? question.title : ''} placeholder='Question Title' style={{ width: '150px' }} />
+                        <Input variant='outline' onChange={(e) => setQuestion({ ...question, title: e.target.value })} value={question ? question.title : ''} placeholder='Question Title' style={{ width: '150px' }} />
                         <select
                             value={question ? question.type : ''}
                             onChange={(e) => setQuestion({ ...question, type: e.target.value })}
@@ -68,7 +69,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Text>pts:</Text>
-                        <Input value={question ? question.points : 0} style={{ marginLeft: '10px', textAlign: 'center', width: '30px' }} variant='outline' placeholder='0' />
+                        <Input onChange={(e) => setQuestion({ ...question, points: parseInt(e.target.value) })} value={question ? question.points : 0} style={{ marginLeft: '10px', textAlign: 'center', width: '30px' }} variant='outline' placeholder='0' />
                     </div>
                 </HStack>
                 <hr />
@@ -76,7 +77,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
 
                 <Text fontSize='xl'><b>Question:</b></Text>
                 <EditorProvider>
-                    <Editor value={question ? question.question : ''} onChange={onChange}>
+                    <Editor value={question ? question.question : ''} onChange={(e) => setQuestion({...question, question: e.target.value})}>
                         <Toolbar>
                             <BtnUndo />
                             <BtnRedo />
@@ -95,33 +96,34 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                 {answers && answers.map((answer: any) => {
                     let textColor = '';
                     let labelText = '';
-
-                    switch (question.type) {
-                        case 'Multiple Choice':
-                            labelText = answer.correct ? 'Correct Answer' : 'Possible Answer';
-                            textColor = answer.correct ? 'green' : 'red';
-                            break;
-                        case 'Fill in the Blanks':
-                            labelText = 'Possible Answer';
-                            textColor = 'green';
-                            break;
-                        case 'True or False':
-                            textColor = answer.correct ? 'green' : 'red';
-                            return (
-                                <HStack key={answer._id}>
-                                    <input
-                                        type="radio"
-                                        name={`correctAnswer-${answer._id}`}
-                                        value={answer.answer}
-                                        checked={answer.correct}
-                                        onChange={() => handleRadioChange(answer._id)}
-                                    />
-                                    <Text color={textColor}>{answer.answer}</Text>
-                                </HStack>
-                            );
-                        default:
-                            return <Text key={answer._id}>Invalid question type</Text>;
-                    }
+                    if (question) {
+                        switch (question.type) {
+                            case 'Multiple Choice':
+                                labelText = answer.correct ? 'Correct Answer' : 'Possible Answer';
+                                textColor = answer.correct ? 'green' : 'red';
+                                break;
+                            case 'Fill in the Blanks':
+                                labelText = 'Possible Answer';
+                                textColor = 'green';
+                                break;
+                            case 'True or False':
+                                textColor = answer.correct ? 'green' : 'red';
+                                return (
+                                    <HStack key={answer._id}>
+                                        <input
+                                            type="radio"
+                                            name={`correctAnswer-${answer._id}`}
+                                            value={answer.answer}
+                                            checked={answer.correct}
+                                            onChange={() => handleRadioChange(answer._id)}
+                                        />
+                                        <Text color={textColor}>{answer.answer}</Text>
+                                    </HStack>
+                                );
+                            default:
+                                return <Text key={answer._id}>Invalid question type</Text>;
+                        }
+                    }  
 
                     return (
                         <HStack key={answer._id}>
@@ -132,13 +134,13 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                         </HStack>
                     );
                 })}
-                {/* <Flex justifyContent="flex-end" mb={4}>
-                    <button className="quiz-btn" type="button" onClick={createAnswer}>Add another answer</button>
+                <Flex justifyContent="flex-end" mb={4}>
+                    <button className="quiz-btn" type="button">Add another answer</button>
                 </Flex>
                 <HStack>
-                    <button className="quiz-btn-danger" type="button">Cancel</button>
-                    <button className="quiz-btn" type="button" onClick={editAnswer}>Update Question</button>
-                </HStack> */}
+                    <button className="quiz-btn-danger" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>
+                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Update Question</button>
+                </HStack>
             </Box>
         </>
     );
