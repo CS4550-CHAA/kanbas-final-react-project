@@ -20,10 +20,15 @@ function Questions() {
         quizId: '',
     })
     const [newQuestion, setNewQuestion] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
-    const selectQuestion = async (questionId: string,) => {
-        const response = await questionClient.findQuestionById(questionId);
-        setQuestion(response.data);
+    const selectQuestion = async (questionId: string) => {
+        console.log(questionId)
+        const res = await questionClient.findQuestionById(questionId);
+        console.log(res)
+        setQuestion(res);
+        console.log(question)
+        setEditMode(true);
     };
 
     const editQuestion = async (question: any) => {
@@ -35,14 +40,14 @@ function Questions() {
 
     const deleteQuestion = async (questionId: string) => {
         await questionClient.deleteQuestion(questionId);
-        setQuestions(questions.filter((q) => q._id !== questionId));
+        setQuestions(questions.filter((q) => q.id !== questionId));
     };
 
     useEffect(() => {
         const findAllQuestionsForQuiz = async () => {
             if (quizId) {
-                const response = await questionClient.findAllQuestionsForQuiz(quizId);
-                setQuestions(response.data);
+                const res = await questionClient.findAllQuestionsForQuiz(quizId);
+                setQuestions(res);
             }
         };
         findAllQuestionsForQuiz();
@@ -51,19 +56,19 @@ function Questions() {
     return (
         <div>
             <br />
-            {questions
+            {questions && questions
                 .map((question: any) => (
-                    <div key={question._id} className="card">
+                    <div key={question.id} className="card">
                         <Card>
                             <CardHeader backgroundColor='lightGrey'>
                                 <HStack justifyContent='space-between' alignItems='center'
                                     style={{ width: '100%', padding: "10px", paddingBottom: "0px" }}>
                                     <HStack>
                                         <Text> Question</Text>
-                                        <button className="quiz-btn" type="button" onClick={() => selectQuestion(question._id)}>
+                                        <button className="quiz-btn" type="button" onClick={() => selectQuestion(question.id)}>
                                             <BsPencil />
                                         </button>
-                                        <button className="quiz-btn" type="button" onClick={() => deleteQuestion(question._id)}>
+                                        <button className="quiz-btn" type="button" onClick={() => deleteQuestion(question.id)}>
                                             <BsTrash3Fill />
                                         </button>
                                     </HStack>
@@ -87,7 +92,7 @@ function Questions() {
             </div>
             <hr />
 
-            {newQuestion && <QuestionEditor question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} />}
+            {(editMode || newQuestion) && <QuestionEditor question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} />}
 
             <div className="d-grid gap-2 d-md-flex justify-content-between">
                 <label>

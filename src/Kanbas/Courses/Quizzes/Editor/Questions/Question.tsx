@@ -9,44 +9,43 @@ interface QuestionProps {
     question: Question
     setQuestion: (value: Question) => void;
     setNewQuestion: (value: boolean) => void;
-  }
+}
 
-export default function QuestionEditor({ question, setQuestion, setNewQuestion }: QuestionProps)  {
-    const [html, setHtml] = useState('my <b>HTML</b>');
+export default function QuestionEditor({ question, setQuestion, setNewQuestion }: QuestionProps) {
     const [answers, setAnswers] = useState([]);
 
     function onChange(e: any) {
-        setHtml(e.target.value);
+        setQuestion({...question, question: e.target.value});
     }
     const handleRadioChange = (index: number) => {
         // to be implemented
     };
 
-    const selectQuestion = async (questionId: string,) => {
-        const response = await questionClient.findQuestionById(questionId);
-        setQuestion(response.data);
-    };
+    // const selectQuestion = async (questionId: string,) => {
+    //     // const response = await answerClient.find(questionId);
+    //     setQuestion(response.data);
+    // };
 
-    const editAnswer = async () => {
-        const response = await answerClient.updateAnswer(answer)
-        setAnswers(...answers, response.data);
-    };
+    // const editAnswer = async () => {
+    //     const response = await answerClient.updateAnswer(answer)
+    //     setAnswers(...answers, response.data);
+    // };
 
-    const deleteQuestion = async (questionId: string) => {
-        await questionClient.deleteQuestion(questionId);
-        setQuestions(questions.filter((q) => q._id !== questionId));
-    };
+    // const deleteQuestion = async (questionId: string) => {
+    //     await questionClient.deleteQuestion(questionId);
+    //     setQuestions(questions.filter((q) => q._id !== questionId));
+    // };
 
-    const createAnswer = async () => {
-        const response = await answerClient.createAnswer(answer);
-        setAnswers(answers.filter((a: answerClient.Answer) => a._id !== response.data._id));
-    };
+    // const createAnswer = async () => {
+    //     const response = await answerClient.createAnswer(answer);
+    //     setAnswers(answers.filter((a: answerClient.Answer) => a._id !== response.data._id));
+    // };
 
     useEffect(() => {
         const fetchAnswersForQuestion = async () => {
             if (question.id) {
-                const response = await answerClient.findAllAnswersForQuestion(question.id);
-                setAnswers(response.data);
+            const response = await answerClient.findAllAnswersForQuestion(question.id);
+            setAnswers(response);
             }
         };
         fetchAnswersForQuestion();
@@ -57,16 +56,19 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
             <Box className="d-grid" style={{ border: '1px solid grey', margin: '60px', padding: '30px' }}>
                 <HStack justifyContent='space-between' alignItems='center' style={{ width: '100%' }}>
                     <div>
-                        <Input variant='outline' placeholder='Question Title' style={{ width: '150px' }} />
-                        <select style={{ color: 'grey', height: '30px', margin: '10px' }}>
-                            <option value='option1'>Multiple Choice</option>
-                            <option value='option2'>True/False</option>
-                            <option value='option3'>Fill In The Blanks</option>
+                        <Input variant='outline' value={question ? question.title : ''} placeholder='Question Title' style={{ width: '150px' }} />
+                        <select
+                            value={question ? question.type : ''}
+                            onChange={(e) => setQuestion({ ...question, type: e.target.value })}
+                            style={{ color: 'grey', height: '30px', margin: '10px' }}>
+                            <option value='Multiple Choice'>Multiple Choice</option>
+                            <option value='True/False'>True/False</option>
+                            <option value='Fill in the Blanks'>Fill in the Blanks</option>
                         </select>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Text>pts:</Text>
-                        <Input style={{ marginLeft: '10px', textAlign: 'center', width: '30px' }} variant='outline' placeholder='0' />
+                        <Input value={question ? question.points : 0} style={{ marginLeft: '10px', textAlign: 'center', width: '30px' }} variant='outline' placeholder='0' />
                     </div>
                 </HStack>
                 <hr />
@@ -74,7 +76,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
 
                 <Text fontSize='xl'><b>Question:</b></Text>
                 <EditorProvider>
-                    <Editor value={html} onChange={onChange}>
+                    <Editor value={question ? question.question : ''} onChange={onChange}>
                         <Toolbar>
                             <BtnUndo />
                             <BtnRedo />
@@ -99,7 +101,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                             labelText = answer.correct ? 'Correct Answer' : 'Possible Answer';
                             textColor = answer.correct ? 'green' : 'red';
                             break;
-                        case 'Fill in The Blanks':
+                        case 'Fill in the Blanks':
                             labelText = 'Possible Answer';
                             textColor = 'green';
                             break;
@@ -130,13 +132,13 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                         </HStack>
                     );
                 })}
-                <Flex justifyContent="flex-end" mb={4}>
+                {/* <Flex justifyContent="flex-end" mb={4}>
                     <button className="quiz-btn" type="button" onClick={createAnswer}>Add another answer</button>
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button">Cancel</button>
                     <button className="quiz-btn" type="button" onClick={editAnswer}>Update Question</button>
-                </HStack>
+                </HStack> */}
             </Box>
         </>
     );

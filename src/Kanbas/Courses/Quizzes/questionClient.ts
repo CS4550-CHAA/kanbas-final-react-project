@@ -21,6 +21,7 @@ export const updateQuestion = async (question: any) => {
 
 export const findAllQuestionsForQuiz = async (quizId: string) => {
   const response = await api.get(`${QUESTIONS_API}/byQuiz/${quizId}`);
+  console.log(response)
   return response.data;
 };
 
