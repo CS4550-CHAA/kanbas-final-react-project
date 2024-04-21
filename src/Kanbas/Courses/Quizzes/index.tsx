@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { FaCheckCircle, FaEllipsisV, FaPlusCircle } from "react-icons/fa";
+import { FaCheckCircle, FaEllipsisV, FaPlusCircle, FaTimesCircle } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "./client";
@@ -97,8 +97,11 @@ function QuizList() {
           <div>
             <FaEllipsisV className="me-2" /> QUIZZES
             <span className="float-end">
-              <FaCheckCircle className="text-success" />
-
+              {quiz.published ? (
+                <FaCheckCircle className="text-success" />
+              ) : (
+                <FaTimesCircle className="text-danger" />
+              )}
               <FaPlusCircle className="ms-2" />
 
               <FaEllipsisV className="ms-2" />
@@ -119,7 +122,9 @@ function QuizList() {
                   </div>
 
                   <div className="col">
+                    <p>{quiz.availability}</p>
                     <p>Due {quiz.dueDate.toString()}</p>
+                    <p>11 points</p>
                     {/* <p>{String(quiz.points)} points</p> TODO: make this a sum of all question points*/}
 
                     <p>{String(quiz.numberOfQuestions)} questions</p>
