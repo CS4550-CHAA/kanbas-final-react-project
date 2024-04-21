@@ -1,7 +1,6 @@
 import axios from "axios";
 export const BASE_API = process.env.REACT_APP_API_BASE;
 export const Quizzes_API = `${BASE_API}/api/Quizzes`;
-const COURSES_API = `${BASE_API}/api/courses`;
 const api = axios.create({
   withCredentials: true,
 });
@@ -55,8 +54,6 @@ export const findQuizById = async (id: String) => {
 };
 
 export const findQuizzesForCourse = async (courseId: string) => {
-  console.log(Quizzes_API);
-  console.log(`${Quizzes_API}/${courseId}`);
   const response = await axios.get(
     `${Quizzes_API}/getQuizzesByCourseId/${courseId}`
   );

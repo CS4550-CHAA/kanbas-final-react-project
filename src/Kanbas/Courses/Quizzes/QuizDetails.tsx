@@ -16,7 +16,7 @@ function QuizDetails() {
   const { quizId } = useParams();
   const [quiz, setQuiz] = useState<Quiz>({
     id: "",
-    title: "",
+    title: "Quiz",
     availability: "",
     description: "",
     published: false,
@@ -46,6 +46,7 @@ function QuizDetails() {
       getQuizById(quizId);
     }
   }, []);
+
   return (
     <div>
       <div style={{ display: "flex", flexDirection: "row" }}>
@@ -63,7 +64,7 @@ function QuizDetails() {
         </button>
       </div>
       <hr />
-      <h3>{quiz.title}</h3>
+      <h3>{quiz?.title}</h3>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div
           style={{
@@ -85,16 +86,17 @@ function QuizDetails() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {quiz.quizType}
+          {quiz?.quizType}
+          10
           {/* <p>{String(quiz.points)}</p> */}
           <label>QUIZZES</label>
-          {/* {quiz.shuffleAnswers} TODO: add this into the database*/}
-          {/* {quiz.timeLimit} TODO: add this into the database*/}
-          {/* {quiz.multipleAttempts} TODO: add this into the database*/}
-          {/* {quiz.showCorrect} TODO: add this into the database*/}
-          {/* {quiz.oneQuestionAtATime} TODO: add this into the database*/}
-          {/* {quiz.webcamRequired} TODO: add this into the database*/}
-          {/* {quiz.lockQuestionsAfterAnswering} TODO: add this into the database*/}
+          {quiz?.shuffleAnswers.toString()}
+          {quiz?.timeLimit.toString()}
+          {quiz?.multipleAttempts}
+          {quiz?.showCorrectAnswers}
+          {quiz?.oneQuestionAtATime}
+          {quiz?.webCamRequired}
+          {quiz?.lockQuestionsAfterAnswering}
         </div>
       </div>
       <div
@@ -119,10 +121,11 @@ function QuizDetails() {
           width: "80%",
         }}
       >
-        {/* {quiz.dueDate} TODO: add this into the database*/}
+        {/* TODO fix format of dates */}
+        {String(quiz?.dueDate)}
         <label>Everyone</label>
-        {/* {quiz.availableDate} TODO: add this into the database*/}
-        {/* {quiz.untilDate} TODO: add this into the database*/}
+        {String(quiz?.availableDate)}
+        {String(quiz?.untilDate)}
       </div>
       <hr />
     </div>

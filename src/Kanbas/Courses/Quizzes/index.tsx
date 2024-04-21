@@ -7,11 +7,10 @@ import * as client from "./client";
 import { Quiz } from "./client";
 function QuizList() {
   const { courseId } = useParams();
-  const { quizId } = useParams();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quiz, setQuiz] = useState<Quiz>({
-    id: "",
-    title: "",
+    id: "Q" + Math.random().toString(4).slice(2),
+    title: "Quiz",
     availability: "",
     description: "",
     published: false,
@@ -31,11 +30,15 @@ function QuizList() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
-
   const createQuiz = async () => {
     try {
-      const newQuiz = await client.createQuiz(quiz);
-      setQuizzes([newQuiz, ...quizzes]);
+      if (courseId) {
+        const newQuiz: Quiz = await client.createQuiz(quiz);
+        newQuiz["course"] = courseId;
+        setQuiz(newQuiz);
+        await updateQuiz();
+        setQuizzes([newQuiz, ...quizzes]);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -50,17 +53,14 @@ function QuizList() {
     }
   };
 
-  // const fetchQuizzes = async () => {
-  //   const quizzes = await client.findAllQuizzes();
-  //   setQuizzes(quizzes);
-  // };
-  // useEffect(() => {
-  //   fetchQuizzes();
-  // }, []);
+  const updateQuiz = async () => {
+    const newQuiz: Quiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
 
   const fetchQuizzesForCourse = async () => {
     if (courseId) {
-      const quizzes = await client.findQuizzesForCourse(courseId);
+      const quizzes = await client.findAllQuizzes();
       console.log("quizzes" + quizzes);
       setQuizzes(quizzes);
     }
