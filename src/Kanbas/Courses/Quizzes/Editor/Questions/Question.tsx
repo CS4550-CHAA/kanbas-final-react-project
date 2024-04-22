@@ -4,6 +4,7 @@ import { BsPencil, BsTrash3Fill } from 'react-icons/bs';
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
 import { Question } from '../../questionClient';
 import * as answerClient from '../../answerClient';
+import {Answer, deleteAnswer, findAllAnswersForQuestion} from "../../answerClient";
 
 interface QuestionProps {
     question: Question
@@ -12,7 +13,22 @@ interface QuestionProps {
 }
 
 export default function QuestionEditor({ question, setQuestion, setNewQuestion }: QuestionProps) {
-    const [answers, setAnswers] = useState([]);
+    //update answers
+    const [answers, setAnswers] = useState<Answer[]>([{
+        _id: '',
+        answer: ' ',
+        isCorrect: true,
+        questionId: question.id
+    }]);
+
+    //update/delete single answer
+    const [answer, setAnswer] = useState({
+        _id: '',
+        answer: ' answer',
+        isCorrect: false,
+        questionId: question.id
+    });
+
 
     function onChange(e: any) {
         setQuestion({...question, question: e.target.value});
@@ -21,25 +37,27 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
         // to be implemented
     };
 
-    // const selectQuestion = async (questionId: string,) => {
-    //     // const response = await answerClient.find(questionId);
-    //     setQuestion(response.data);
-    // };
 
-    // const editAnswer = async () => {
-    //     const response = await answerClient.updateAnswer(answer)
-    //     setAnswers(...answers, response.data);
-    // };
+    const editAnswer = async (answer: Answer) => {
+        // const response = await answerClient.updateAnswer(answer)
+        // setAnswer(...answer, response.data); TODO
+    };
 
-    // const deleteQuestion = async (questionId: string) => {
-    //     await questionClient.deleteQuestion(questionId);
-    //     setQuestions(questions.filter((q) => q._id !== questionId));
-    // };
 
-    // const createAnswer = async () => {
-    //     const response = await answerClient.createAnswer(answer);
-    //     setAnswers(answers.filter((a: answerClient.Answer) => a._id !== response.data._id));
-    // };
+    const deleteAnswer = async (answerId: string) => {
+        await answerClient.deleteAnswer(answerId);
+        setAnswers(answers.filter((a: answerClient.Answer) => a._id !== answerId));
+    };
+
+    const createAnswer = async (questionId : string) => {
+        const newAnswer = {
+            answer: answer.answer, isCorrect: answer.isCorrect, questionId: questionId
+        };
+        const response = await answerClient.createAnswer(newAnswer);
+        setAnswers([...answers, response]);
+        await fetchAnswers();
+    };
+
 
     useEffect(() => {
         const fetchAnswersForQuestion = async () => {
@@ -50,6 +68,11 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
         };
         fetchAnswersForQuestion();
     }, [question.id])
+
+    const fetchAnswers = async() => {
+        const answers = await answerClient.findAllAnswersForQuestion(question.id);
+        setAnswers(answers);
+    }
 
     return (
         <>
@@ -98,22 +121,23 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
 
                     switch (question.type) {
                         case 'Multiple Choice':
-                            labelText = answer.correct ? 'Correct Answer' : 'Possible Answer';
-                            textColor = answer.correct ? 'green' : 'red';
+                            labelText = answer.isCorrect ? 'Correct Answer' : 'Possible Answer';
+                            textColor = answer.isCorrect ? 'green' : 'red';
                             break;
                         case 'Fill in the Blanks':
                             labelText = 'Possible Answer';
                             textColor = 'green';
                             break;
                         case 'True or False':
-                            textColor = answer.correct ? 'green' : 'red';
+                            textColor = answer.isCorrect ? 'green' : 'red';
+                            break;
                             return (
                                 <HStack key={answer._id}>
                                     <input
                                         type="radio"
                                         name={`correctAnswer-${answer._id}`}
                                         value={answer.answer}
-                                        checked={answer.correct}
+                                        checked={answer.isCorrect}
                                         onChange={() => handleRadioChange(answer._id)}
                                     />
                                     <Text color={textColor}>{answer.answer}</Text>
@@ -126,19 +150,26 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion }
                     return (
                         <HStack key={answer._id}>
                             <Text color={textColor}>{labelText}</Text>
-                            <input value={answer.answer} />
-                            <button className="quiz-btn" type="button"><BsPencil /></button>
-                            <button className="quiz-btn" type="button"><BsTrash3Fill /></button>
+                            <input
+                                value={answer.answer}
+                                onChange={(e) => setAnswer({...answer, answer: e.target.value})}
+                            />
+                            <button className="quiz-btn" type="button"
+                                    onClick={() => editAnswer(answer)}> //TODO
+                                <BsPencil/></button>
+                            <button className="quiz-btn" type="button"
+                                    onClick={() => deleteAnswer(answer._id)}>
+                                <BsTrash3Fill/></button>
                         </HStack>
                     );
                 })}
-                {/* <Flex justifyContent="flex-end" mb={4}>
-                    <button className="quiz-btn" type="button" onClick={createAnswer}>Add another answer</button>
+                <Flex justifyContent="flex-end" mb={4}>
+                <button className="quiz-btn" type="button" onClick = {() => createAnswer(question.id)}>Add another answer</button>
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button">Cancel</button>
-                    <button className="quiz-btn" type="button" onClick={editAnswer}>Update Question</button>
-                </HStack> */}
+                    <button className="quiz-btn" type="button" onClick={() => editAnswer}>Update Question</button>
+                </HStack>
             </Box>
         </>
     );

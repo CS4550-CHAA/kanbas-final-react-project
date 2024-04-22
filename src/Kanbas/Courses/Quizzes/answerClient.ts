@@ -6,6 +6,7 @@ const api = axios.create({
 });
 
 export interface Answer {
+    _id: string;
     answer: string;
     isCorrect: boolean;
     questionId: string;
@@ -21,7 +22,7 @@ export const findAllAnswersForQuestion = async (questionId: string) => {
   return response.data;
 };
 
-export const createAnswer = async (answer: Answer) => {
+export const createAnswer = async (answer: any) => {
   const response = await api.post(`${ANSWERS_API}`, answer);
   return response.data;
 };
