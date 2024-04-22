@@ -65,12 +65,13 @@ function QuizDetails() {
       </div>
       <hr />
       <h3>{quiz?.title}</h3>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{ display: "flex", flexDirection: "row", paddingTop: "50px", paddingBottom: "50px" }}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "right",
+            alignItems: "flex-end",
+            paddingRight: "20px"
           }}
         >
           <label>Quiz Type</label>
@@ -86,46 +87,47 @@ function QuizDetails() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {quiz?.quizType}
-          10
-          {/* <p>{String(quiz.points)}</p> */}
+          <label>{quiz?.quizType}</label>
+          <label>10</label>
+          <label>{/* <p>{String(quiz.points)}</p> */}</label>
           <label>QUIZZES</label>
-          {quiz?.shuffleAnswers.toString()}
-          {quiz?.timeLimit.toString()}
-          {quiz?.multipleAttempts}
-          {quiz?.showCorrectAnswers}
-          {quiz?.oneQuestionAtATime}
-          {quiz?.webCamRequired}
-          {quiz?.lockQuestionsAfterAnswering}
+          <label>{quiz?.shuffleAnswers.toString()}</label>
+          <label>{quiz?.timeLimit.toString()}</label>
+          <label>{quiz?.multipleAttempts}</label>
+          <label>{quiz?.showCorrectAnswers}</label>
+          <label>{quiz?.oneQuestionAtATime}</label>
+          <label>{quiz?.webCamRequired}</label>
+          <label>{quiz?.lockQuestionsAfterAnswering}</label>
         </div>
       </div>
+      
       <div
         style={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
-          width: "80%",
         }}
       >
-        <h6>Due</h6>
-        <h6>For</h6>
-        <h6>Available from</h6>
-        <h6>Until</h6>
-      </div>
-      <hr />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "80%",
-        }}
-      >
-        {/* TODO fix format of dates */}
-        {String(quiz?.dueDate)}
-        <label>Everyone</label>
-        {String(quiz?.availableDate)}
-        {String(quiz?.untilDate)}
+        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+          <h6>Due</h6>
+          <hr style={{ width: "100%" }}/>
+          {String(quiz?.dueDate)}
+        </div>
+        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+          <h6>For</h6>
+          <hr style={{ width: "100%" }}/>
+          <label>Everyone</label>
+        </div>
+        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+          <h6>Available from</h6>
+          <hr style={{ width: "100%" }}/>
+          {String(quiz?.availableDate)}
+        </div>
+        <div style={{display: "flex", flexDirection: "column"}}>
+          <h6 style={{paddingRight: "50px"}}>Until</h6>
+          <hr style={{ width: "100%" }}/>
+          <label style={{paddingRight: "50px"}}>{String(quiz?.untilDate)}</label>
+        </div>
       </div>
       <hr />
     </div>
