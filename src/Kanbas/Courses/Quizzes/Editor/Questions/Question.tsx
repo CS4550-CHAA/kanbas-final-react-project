@@ -1,6 +1,7 @@
 import { Box, HStack, Flex, Input, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { BsPencil, BsTrash3Fill } from 'react-icons/bs';
+import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
 import { Question } from '../../questionClient';
 import * as answerClient from '../../answerClient';
@@ -16,21 +17,32 @@ interface QuestionProps {
 }
 
 export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode }: QuestionProps) {
-    const [answers, setAnswers] = useState([]);
+    const [answers, setAnswers] = useState<any[]>([]);
+    const [answer, setAnswer] = useState({
+        _id: '',
+        answer: '',
+        isCorrect: false,
+        questionId: question.id
+    });
+    const [answerEdit, setAnswerEdit] = useState(false);
 
     const handleRadioChange = (index: number) => {
         // to be implemented
     };
 
-    // const selectQuestion = async (questionId: string,) => {
-    //     // const response = await answerClient.find(questionId);
-    //     setQuestion(response.data);
-    // };
+    const selectAnswer = async (answerId: string) => {
+        const response = await answerClient.findAnswerById(answerId);
+        setAnswer(response);
+        setAnswerEdit(true);
+    };
 
-    // const editAnswer = async () => {
-    //     const response = await answerClient.updateAnswer(answer)
-    //     setAnswers(...answers, response.data);
-    // };
+    const editAnswer = async (answer: any) => {
+        const response = await answerClient.updateAnswer(answer)
+        setAnswer(response)
+        setAnswers(answers.map((a) =>
+            (a.id === a._id ? answer : a)));
+        setAnswerEdit(false);
+    };
 
     // const deleteQuestion = async (questionId: string) => {
     //     await questionClient.deleteQuestion(questionId);
@@ -50,7 +62,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
             }
         };
         fetchAnswersForQuestion();
-    }, [question])
+    }, [question, answers])
 
     return (
         <>
@@ -93,31 +105,31 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                     </Editor>
                 </EditorProvider>
                 <Text fontSize='xl' style={{ marginTop: '10px' }}><b>Answers:</b></Text>
-                {answers && answers.map((answer: any) => {
+                {answers && answers.map((currAnswer: any) => {
                     let textColor = '';
                     let labelText = '';
                     if (question) {
                         switch (question.type) {
                             case 'Multiple Choice':
-                                labelText = answer.correct ? 'Correct Answer' : 'Possible Answer';
-                                textColor = answer.correct ? 'green' : 'red';
+                                labelText = currAnswer.correct ? 'Correct Answer' : 'Possible Answer';
+                                textColor = currAnswer.correct ? 'green' : 'red';
                                 break;
                             case 'Fill in the Blanks':
                                 labelText = 'Possible Answer';
                                 textColor = 'green';
                                 break;
                             case 'True or False':
-                                textColor = answer.correct ? 'green' : 'red';
+                                textColor = currAnswer.correct ? 'green' : 'red';
                                 return (
-                                    <HStack key={answer._id}>
+                                    <HStack key={currAnswer._id}>
                                         <input
                                             type="radio"
-                                            name={`correctAnswer-${answer._id}`}
-                                            value={answer.answer}
-                                            checked={answer.correct}
-                                            onChange={() => handleRadioChange(answer._id)}
+                                            name={`correctAnswer-${currAnswer._id}`}
+                                            value={currAnswer.answer}
+                                            checked={currAnswer.correct}
+                                            onChange={() => handleRadioChange(currAnswer._id)}
                                         />
-                                        <Text color={textColor}>{answer.answer}</Text>
+                                        <Text color={textColor}>{currAnswer.answer}</Text>
                                     </HStack>
                                 );
                             default:
@@ -126,10 +138,10 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                     }  
 
                     return (
-                        <HStack key={answer._id}>
+                        <HStack key={currAnswer._id}>
                             <Text color={textColor}>{labelText}</Text>
-                            <input value={answer.answer} />
-                            <button className="quiz-btn" type="button"><BsPencil /></button>
+                            {(answerEdit && (answer._id === currAnswer._id)) ? <input value={answer?.answer} onChange={(e) => setAnswer({...answer, answer: e.target.value})} /> : <Text>{currAnswer.answer}</Text>}
+                            {(answerEdit && (answer._id === currAnswer._id)) ? <button className="quiz-btn" type="button" onClick={() => editAnswer(answer)}><IoIosCheckmarkCircleOutline /></button> : <button className="quiz-btn" type="button" onClick={() => selectAnswer(currAnswer._id)}><BsPencil /></button>}
                             <button className="quiz-btn" type="button"><BsTrash3Fill /></button>
                         </HStack>
                     );
