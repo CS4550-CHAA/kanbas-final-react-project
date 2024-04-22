@@ -115,7 +115,9 @@ function QuizList() {
 
                 <div className="row">
                   <div className="col-2">
-                    <p className="multipleModules">{quiz.availability}</p>
+                    <p className="multipleModules">
+                      Available Until {quiz.availableDate.toString()}{" "}
+                    </p>
                   </div>
 
                   <div className="col">

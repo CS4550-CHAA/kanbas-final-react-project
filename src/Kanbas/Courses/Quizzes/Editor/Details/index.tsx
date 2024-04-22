@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { addQuiz, deleteQuiz, updateQuiz, setQuiz } from "./reducer";
-import { KanbasState } from "../../../../store";
+import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
-import { create } from "domain";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
   const { quizId } = useParams();
@@ -92,12 +88,11 @@ function QuizDetailsEditor() {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <input
-        value={quiz?.title.toString()}
+        value={String(quiz?.title)}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
       />
       <br />
       <p> Quiz Instructions: </p>
-      {/* TODO: add the editor bar for instructions  */}
       <div
         style={{
           display: "flex",
@@ -220,12 +215,21 @@ function QuizDetailsEditor() {
       <h5>Options</h5>
       <div>
         {" "}
-        {/* TODO: <input type="checkbox" value="Shuffle Answers" id="shuffle" />
-        <label htmlFor="shuffle">Shuffle Answers</label> */}
+        <input
+          type="checkbox"
+          value="Shuffle Answers"
+          id="shuffle"
+          checked={quiz.shuffleAnswers === "Yes"}
+          onChange={() =>
+            quiz.shuffleAnswers === "Yes"
+              ? setQuiz({ ...quiz, shuffleAnswers: "No" })
+              : setQuiz({ ...quiz, shuffleAnswers: "Yes" })
+          }
+        />
+        <label htmlFor="shuffle">Shuffle Answers</label>
       </div>
 
       {/* TODO: make the time limit and minutes in the same row  */}
-      {/* TODO: time limit checkbox change value */}
       <div className="flex-row">
         <div style={{ display: "flex", flexDirection: "row" }}>
           {" "}
@@ -235,6 +239,7 @@ function QuizDetailsEditor() {
 
         <input
           type="number"
+          value={String(quiz.timeLimit)}
           onChange={(e) =>
             setQuiz({ ...quiz, timeLimit: parseInt(e.target.value) })
           }
@@ -244,25 +249,62 @@ function QuizDetailsEditor() {
 
       <div>
         {" "}
-        <input type="checkbox" value="Allow Multiple Attempts" id="attempts" />
+        <input
+          type="checkbox"
+          value="Allow Multiple Attempts"
+          id="attempts"
+          checked={quiz.multipleAttempts === "Yes"}
+          onChange={() =>
+            quiz.multipleAttempts === "Yes"
+              ? setQuiz({ ...quiz, multipleAttempts: "No" })
+              : setQuiz({ ...quiz, multipleAttempts: "Yes" })
+          }
+        />
         <label htmlFor="attempts">Allow Multiple Attemps</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="One" />
+        <input
+          type="checkbox"
+          id="One"
+          checked={quiz.oneQuestionAtATime === "Yes"}
+          onChange={() =>
+            quiz.oneQuestionAtATime === "Yes"
+              ? setQuiz({ ...quiz, oneQuestionAtATime: "No" })
+              : setQuiz({ ...quiz, oneQuestionAtATime: "Yes" })
+          }
+        />
         <label htmlFor="One">One Question at a Time</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="WebCam" />
+        <input
+          type="checkbox"
+          id="WebCam"
+          checked={quiz.webCamRequired === "Yes"}
+          onChange={() =>
+            quiz.webCamRequired === "Yes"
+              ? setQuiz({ ...quiz, webCamRequired: "No" })
+              : setQuiz({ ...quiz, webCamRequired: "Yes" })
+          }
+        />
         <label htmlFor="WebCam">WebCam Required</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="lock" />
+        <input
+          type="checkbox"
+          id="lock"
+          checked={quiz.lockQuestionsAfterAnswering === "Yes"}
+          onChange={() =>
+            quiz.lockQuestionsAfterAnswering === "Yes"
+              ? setQuiz({ ...quiz, lockQuestionsAfterAnswering: "No" })
+              : setQuiz({ ...quiz, lockQuestionsAfterAnswering: "Yes" })
+          }
+        />
         <label htmlFor="lock">Lock Questions after answering</label>
       </div>
 
