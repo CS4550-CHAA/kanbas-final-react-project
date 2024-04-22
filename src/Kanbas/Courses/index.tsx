@@ -12,6 +12,7 @@ import QuizNavigation from "./Quizzes/Editor";
 import Details from "./Quizzes/Editor/Details";
 import Questions from "./Quizzes/Editor/Questions";
 import QuizDetails from "./Quizzes/QuizDetails";
+import QuizPreview from "./Quizzes/QuizPreview";
 
 function Courses({ courses }: { courses: any[] }) {
   const API_BASE = process.env.REACT_APP_API_BASE;
@@ -61,6 +62,10 @@ function Courses({ courses }: { courses: any[] }) {
             <Route
               path="Quizzes/:quizId/Editor/Questions"
               element={<Questions />}
+            />
+            <Route
+              path="Quizzes/:quizId/QuizPreview"
+              element={<QuizPreview />}
             />
           </Routes>
         </div>

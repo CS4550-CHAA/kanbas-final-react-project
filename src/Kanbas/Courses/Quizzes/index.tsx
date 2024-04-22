@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { FaCheckCircle, FaEllipsisV, FaPlusCircle, FaTimesCircle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaEllipsisV,
+  FaPlusCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "./client";
@@ -30,6 +35,7 @@ function QuizList() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
+  const [flag, setFlag] = useState(false);
   const createQuiz = async () => {
     try {
       if (courseId) {
@@ -70,7 +76,12 @@ function QuizList() {
     fetchQuizzesForCourse();
   }, []);
 
-  console.log(quizzes);
+  //TODO: this isnt working
+  function publishQuiz() {
+    setQuiz({ ...quiz, published: true });
+    updateQuiz();
+    setFlag((flag) => !flag);
+  }
 
   return (
     <>
@@ -162,7 +173,7 @@ function QuizList() {
                         Delete
                       </Dropdown.Item>
 
-                      <Dropdown.Item onClick={() => deleteQuiz(quiz)}>
+                      <Dropdown.Item onClick={() => publishQuiz()}>
                         Publish
                       </Dropdown.Item>
                     </Dropdown.Menu>

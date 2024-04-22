@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { KanbasState } from "../../store";
 import {
   FaPen,
   FaChevronRight,
@@ -36,6 +35,7 @@ function QuizDetails() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
+  const [flag, setFlag] = useState(false);
 
   const getQuizById = async (id: any) => {
     const newQuiz = await client.findQuizById(id);
@@ -47,13 +47,42 @@ function QuizDetails() {
     }
   }, []);
 
+  const updateQuiz = async () => {
+    const newQuiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
+
+  const publishQuiz = async () => {
+    setQuiz({ ...quiz, published: true });
+    const newQuiz = await client.updateQuiz(quiz);
+    setQuiz({ ...newQuiz, published: true });
+    setQuiz(newQuiz);
+    setFlag((flag) => !flag);
+  };
+
+  console.log(quiz);
+
   return (
     <div>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <button style={{ backgroundColor: "green", color: "white" }}>
-          <FaCheckCircle /> Published
+        <button
+          style={
+            flag
+              ? { backgroundColor: "red", color: "white" }
+              : { backgroundColor: "green", color: "white" }
+          }
+          onClick={() => publishQuiz()}
+        >
+          <FaCheckCircle /> {flag ? "Unpublish" : "Publish"}
         </button>
-        <button>Preview</button>
+
+        <button>
+          <Link
+            to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/QuizPreview`}
+          >
+            Preview
+          </Link>
+        </button>
         <button>
           <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor`}>
             <FaPen /> Edit
@@ -65,13 +94,20 @@ function QuizDetails() {
       </div>
       <hr />
       <h3>{quiz?.title}</h3>
-      <div style={{ display: "flex", flexDirection: "row", paddingTop: "50px", paddingBottom: "50px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          paddingTop: "50px",
+          paddingBottom: "50px",
+        }}
+      >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-end",
-            paddingRight: "20px"
+            paddingRight: "20px",
           }}
         >
           <label>Quiz Type</label>
@@ -91,8 +127,8 @@ function QuizDetails() {
           <label>10</label>
           <label>{/* <p>{String(quiz.points)}</p> */}</label>
           <label>QUIZZES</label>
-          <label>{quiz?.shuffleAnswers.toString()}</label>
-          <label>{quiz?.timeLimit.toString()}</label>
+          <label>{quiz?.shuffleAnswers}</label>
+          <label>{String(quiz?.timeLimit)}</label>
           <label>{quiz?.multipleAttempts}</label>
           <label>{quiz?.showCorrectAnswers}</label>
           <label>{quiz?.oneQuestionAtATime}</label>
@@ -100,7 +136,7 @@ function QuizDetails() {
           <label>{quiz?.lockQuestionsAfterAnswering}</label>
         </div>
       </div>
-      
+
       <div
         style={{
           display: "flex",
@@ -108,25 +144,33 @@ function QuizDetails() {
           justifyContent: "space-between",
         }}
       >
-        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
           <h6>Due</h6>
-          <hr style={{ width: "100%" }}/>
+          <hr style={{ width: "100%" }} />
           {String(quiz?.dueDate)}
         </div>
-        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
           <h6>For</h6>
-          <hr style={{ width: "100%" }}/>
+          <hr style={{ width: "100%" }} />
           <label>Everyone</label>
         </div>
-        <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
           <h6>Available from</h6>
-          <hr style={{ width: "100%" }}/>
+          <hr style={{ width: "100%" }} />
           {String(quiz?.availableDate)}
         </div>
-        <div style={{display: "flex", flexDirection: "column"}}>
-          <h6 style={{paddingRight: "50px"}}>Until</h6>
-          <hr style={{ width: "100%" }}/>
-          <label style={{paddingRight: "50px"}}>{String(quiz?.untilDate)}</label>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <h6 style={{ paddingRight: "50px" }}>Until</h6>
+          <hr style={{ width: "100%" }} />
+          <label style={{ paddingRight: "50px" }}>
+            {String(quiz?.untilDate)}
+          </label>
         </div>
       </div>
       <hr />

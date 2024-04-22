@@ -31,6 +31,7 @@ function QuizDetailsEditor() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
+  // const [flag, setFlag] = useState(false);
 
   const fetchQuiz = async () => {
     if (quizId) {
@@ -80,10 +81,11 @@ function QuizDetailsEditor() {
     setQuiz(newQuiz);
   };
 
-  async function publishQuiz() {
+  const publishQuiz = async () => {
     setQuiz({ ...quiz, published: true });
-    await updateQuiz();
-  }
+    const newQuiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -312,20 +314,31 @@ function QuizDetailsEditor() {
       <input
         type="date"
         id="text-fields-due"
-        value={String(quiz.dueDate)}
+        value={String(new Date(quiz.dueDate).toISOString().slice(0, 10))}
         onChange={(e) =>
           setQuiz({ ...quiz, dueDate: new Date(e.target.value) })
         }
       />
 
-      <label htmlFor="text-fields-available"> Available Date: </label>
-      <input type="date" id="text-fields-available" value="2000-01-21" />
-
-      <label htmlFor="text-fields-from"> Available From: </label>
-      <input type="date" id="text-fields-from" value="2000-01-21" />
+      <label htmlFor="text-fields-available"> Available From: </label>
+      <input
+        type="date"
+        id="text-fields-available"
+        value={String(new Date(quiz.availableDate).toISOString().slice(0, 10))}
+        onChange={(e) =>
+          setQuiz({ ...quiz, availableDate: new Date(e.target.value) })
+        }
+      />
 
       <label htmlFor="text-fields-until"> Until: </label>
-      <input type="date" id="text-fields-until" value="2000-01-21" />
+      <input
+        type="date"
+        id="text-fields-until"
+        value={String(new Date(quiz.untilDate).toISOString().slice(0, 10))}
+        onChange={(e) =>
+          setQuiz({ ...quiz, untilDate: new Date(e.target.value) })
+        }
+      />
 
       <hr />
       <div className="row">
