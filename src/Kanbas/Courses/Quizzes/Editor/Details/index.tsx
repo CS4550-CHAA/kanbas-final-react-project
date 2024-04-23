@@ -1,45 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { addQuiz, deleteQuiz, updateQuiz, setQuiz } from "./reducer";
-import { KanbasState } from "../../../../store";
+import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
-import { create } from "domain";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
-  // const quizList = useSelector(
-  //   (state: KanbasState) => state.quizzesReducer.quizzes
-  // );
-  // const quiz = useSelector((state: KanbasState) => state.quizzesReducer.quiz);
-  // const dispatch = useDispatch();
-  // const handleAddQuiz = () => {
-  //   if (courseId) {
-  //     client.createQuiz(courseId, quiz).then((quiz) => {
-  //       dispatch(addQuiz(quiz));
-  //     });
-  //   }
-  // };
-  // const handleDeleteQuiz = (quizId: string) => {
-  //   client.deleteQuiz(quizId).then((status) => {
-  //     dispatch(deleteQuiz(quizId));
-  //   });
-  // };
-
-  // const handlePublishQuiz = () => {
-  //   if (courseId) {
-  //     client.createQuiz(courseId, quiz).then((quiz) => {
-  //       dispatch(setQuiz({ ...quiz, published: true }));
-  //       dispatch(addQuiz(quiz));
-  //     });
-  //   }
-  // };
-  // const [selectedQuizType, setSelectedQuizType] = useState("Graded Quiz");
-  // const [assignmentGroup, setAssignmentGroup] = useState("Quizzes");
-
   const { quizId } = useParams();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quiz, setQuiz] = useState<Quiz>({
@@ -64,15 +31,31 @@ function QuizDetailsEditor() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
+  // const [flag, setFlag] = useState(false);
 
-  const createQuiz = async () => {
-    try {
-      const newQuiz = await client.createQuiz(quiz);
-      setQuizzes([newQuiz, ...quizzes]);
-    } catch (err) {
-      console.log(err);
+  const fetchQuiz = async () => {
+    if (quizId) {
+      const curQuiz: Quiz = await client.findQuizById(quizId);
+      setQuiz(curQuiz);
     }
   };
+
+  useEffect(() => {
+    async function fetchTheQuiz() {
+      await fetchQuiz();
+    }
+    fetchTheQuiz();
+  }, []);
+
+  // const createQuiz = async () => {
+  //   try {
+  //     const newQuiz = await client.createQuiz(quiz);
+  //     setQuiz({ ...newQuiz, id: "Q" + Math.random().toString(4).slice(2) });
+  //     setQuizzes([newQuiz, ...quizzes]);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const deleteQuiz = async (quiz: Quiz) => {
     try {
@@ -84,8 +67,10 @@ function QuizDetailsEditor() {
   };
 
   const fetchQuizzes = async () => {
-    const quizzes = await client.findAllQuizzes();
-    setQuizzes(quizzes);
+    if (courseId) {
+      const quizzes = await client.findQuizzesForCourse(courseId);
+      setQuizzes(quizzes);
+    }
   };
   useEffect(() => {
     fetchQuizzes();
@@ -96,20 +81,20 @@ function QuizDetailsEditor() {
     setQuiz(newQuiz);
   };
 
-  function publishQuiz(): void {
+  const publishQuiz = async () => {
     setQuiz({ ...quiz, published: true });
-    createQuiz();
-  }
+    const newQuiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <input
-        value={quiz.title.toString()}
+        value={String(quiz?.title)}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
       />
       <br />
       <p> Quiz Instructions: </p>
-      {/* TODO: add the editor bar for instructions  */}
       <div
         style={{
           display: "flex",
@@ -159,8 +144,8 @@ function QuizDetailsEditor() {
         </label>
       </div>
       <textarea
-      // value={quiz.instructions} TODO: add this to schema
-      // onChange={updateQuiz}
+        value={String(quiz.description)}
+        onChange={(e) => setQuiz({ ...quiz, description: e.target.value })}
       />
       <div
         style={{
@@ -175,48 +160,74 @@ function QuizDetailsEditor() {
       <label htmlFor="quiz-type">Quiz Type</label>
       <Dropdown>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
-          {/* {selectedQuizType} TODO: add to schema*/}
+          {quiz.quizType}
         </Dropdown.Toggle>
-        {/* <Dropdown.Menu>
-          <Dropdown.Item onClick={() => setSelectedQuizType("Graded Quiz")}>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, quizType: "Graded Quiz" })}
+          >
             Graded Quiz
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setSelectedQuizType("Practice Quiz")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, quizType: "Practice Quiz" })}
+          >
             Practice Quiz
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setSelectedQuizType("Graded Survey")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, quizType: "Graded Survey" })}
+          >
             Graded Survey
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setSelectedQuizType("Ungraded Survey")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, quizType: "Ungraded Survey" })}
+          >
             Ungraded Survey
           </Dropdown.Item>
-        </Dropdown.Menu> */}
+        </Dropdown.Menu>
       </Dropdown>
       <br />
       <label htmlFor="quiz-type">Assignment Group</label>
       <Dropdown>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
-          {/* {assignmentGroup} TODO: add to schema or hardcode*/}
+          {quiz.assignmentGroup}
         </Dropdown.Toggle>
-        {/* <Dropdown.Menu>
-          <Dropdown.Item onClick={() => setAssignmentGroup("Quizzes")}>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, assignmentGroup: "Quizzes" })}
+          >
             Quizzes
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setAssignmentGroup("Exams")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, assignmentGroup: "Exams" })}
+          >
             Exams
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setAssignmentGroup("Assignments")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, assignmentGroup: "Assignments" })}
+          >
             Assignments
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => setAssignmentGroup("Project")}>
+          <Dropdown.Item
+            onClick={() => setQuiz({ ...quiz, assignmentGroup: "Project" })}
+          >
             Project
           </Dropdown.Item>
-        </Dropdown.Menu> */}
+        </Dropdown.Menu>
       </Dropdown>
       <h5>Options</h5>
       <div>
         {" "}
-        <input type="checkbox" value="Shuffle Answers" id="shuffle" />
+        <input
+          type="checkbox"
+          value="Shuffle Answers"
+          id="shuffle"
+          checked={quiz.shuffleAnswers === "Yes"}
+          onChange={() =>
+            quiz.shuffleAnswers === "Yes"
+              ? setQuiz({ ...quiz, shuffleAnswers: "No" })
+              : setQuiz({ ...quiz, shuffleAnswers: "Yes" })
+          }
+        />
         <label htmlFor="shuffle">Shuffle Answers</label>
       </div>
 
@@ -225,39 +236,77 @@ function QuizDetailsEditor() {
         <div style={{ display: "flex", flexDirection: "row" }}>
           {" "}
           <input type="checkbox" value="Time Limit" id="time" />
-          <label htmlFor="time">Time Limit</label>
+          {/* <label htmlFor="time">{quiz.timeLimit.toString()}</label> */}
         </div>
 
-        {/* TODO: add minutes <input
+        <input
           type="number"
+          value={String(quiz.timeLimit)}
           onChange={(e) =>
-            dispatch(setQuiz({ ...quiz, minutes: parseInt(e.target.value) }))
+            setQuiz({ ...quiz, timeLimit: parseInt(e.target.value) })
           }
-        /> */}
+        />
         <label>Minutes</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" value="Allow Multiple Attempts" id="attempts" />
+        <input
+          type="checkbox"
+          value="Allow Multiple Attempts"
+          id="attempts"
+          checked={quiz.multipleAttempts === "Yes"}
+          onChange={() =>
+            quiz.multipleAttempts === "Yes"
+              ? setQuiz({ ...quiz, multipleAttempts: "No" })
+              : setQuiz({ ...quiz, multipleAttempts: "Yes" })
+          }
+        />
         <label htmlFor="attempts">Allow Multiple Attemps</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="One" />
+        <input
+          type="checkbox"
+          id="One"
+          checked={quiz.oneQuestionAtATime === "Yes"}
+          onChange={() =>
+            quiz.oneQuestionAtATime === "Yes"
+              ? setQuiz({ ...quiz, oneQuestionAtATime: "No" })
+              : setQuiz({ ...quiz, oneQuestionAtATime: "Yes" })
+          }
+        />
         <label htmlFor="One">One Question at a Time</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="WebCam" />
+        <input
+          type="checkbox"
+          id="WebCam"
+          checked={quiz.webCamRequired === "Yes"}
+          onChange={() =>
+            quiz.webCamRequired === "Yes"
+              ? setQuiz({ ...quiz, webCamRequired: "No" })
+              : setQuiz({ ...quiz, webCamRequired: "Yes" })
+          }
+        />
         <label htmlFor="WebCam">WebCam Required</label>
       </div>
 
       <div>
         {" "}
-        <input type="checkbox" id="lock" />
+        <input
+          type="checkbox"
+          id="lock"
+          checked={quiz.lockQuestionsAfterAnswering === "Yes"}
+          onChange={() =>
+            quiz.lockQuestionsAfterAnswering === "Yes"
+              ? setQuiz({ ...quiz, lockQuestionsAfterAnswering: "No" })
+              : setQuiz({ ...quiz, lockQuestionsAfterAnswering: "Yes" })
+          }
+        />
         <label htmlFor="lock">Lock Questions after answering</label>
       </div>
 
@@ -265,20 +314,31 @@ function QuizDetailsEditor() {
       <input
         type="date"
         id="text-fields-due"
-        value={quiz.dueDate ? quiz.dueDate.toISOString().split("T")[0] : ""}
+        value={String(new Date(quiz.dueDate).toISOString().slice(0, 10))}
         onChange={(e) =>
           setQuiz({ ...quiz, dueDate: new Date(e.target.value) })
         }
       />
 
-      <label htmlFor="text-fields-available"> Available Date: </label>
-      <input type="date" id="text-fields-available" value="2000-01-21" />
-
-      <label htmlFor="text-fields-from"> Available From: </label>
-      <input type="date" id="text-fields-from" value="2000-01-21" />
+      <label htmlFor="text-fields-available"> Available From: </label>
+      <input
+        type="date"
+        id="text-fields-available"
+        value={String(new Date(quiz.availableDate).toISOString().slice(0, 10))}
+        onChange={(e) =>
+          setQuiz({ ...quiz, availableDate: new Date(e.target.value) })
+        }
+      />
 
       <label htmlFor="text-fields-until"> Until: </label>
-      <input type="date" id="text-fields-until" value="2000-01-21" />
+      <input
+        type="date"
+        id="text-fields-until"
+        value={String(new Date(quiz.untilDate).toISOString().slice(0, 10))}
+        onChange={(e) =>
+          setQuiz({ ...quiz, untilDate: new Date(e.target.value) })
+        }
+      />
 
       <hr />
       <div className="row">
@@ -326,7 +386,7 @@ function QuizDetailsEditor() {
                 Save & Publish
               </Link>{" "}
             </button>
-            <button onClick={createQuiz} className="btn btn-danger">
+            <button onClick={updateQuiz} className="btn btn-danger">
               {" "}
               <Link
                 to={`/Kanbas/Courses/${courseId}/Quizzes/`}

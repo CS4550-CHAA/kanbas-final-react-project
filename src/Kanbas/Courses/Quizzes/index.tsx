@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { FaCheckCircle, FaEllipsisV, FaPlusCircle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaEllipsisV,
+  FaPlusCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "./client";
 import { Quiz } from "./client";
 function QuizList() {
   const { courseId } = useParams();
-  const { quizId } = useParams();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [quiz, setQuiz] = useState<Quiz>({
-    id: "",
-    title: "",
+    id: "Q" + Math.random().toString(4).slice(2),
+    title: "Quiz",
     availability: "",
     description: "",
     published: false,
@@ -31,11 +35,16 @@ function QuizList() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
-
+  const [flag, setFlag] = useState(false);
   const createQuiz = async () => {
     try {
-      const newQuiz = await client.createQuiz(quiz);
-      setQuizzes([newQuiz, ...quizzes]);
+      if (courseId) {
+        const newQuiz: Quiz = await client.createQuiz(quiz);
+        newQuiz["course"] = courseId;
+        setQuiz(newQuiz);
+        await updateQuiz();
+        setQuizzes([newQuiz, ...quizzes]);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -50,17 +59,14 @@ function QuizList() {
     }
   };
 
-  // const fetchQuizzes = async () => {
-  //   const quizzes = await client.findAllQuizzes();
-  //   setQuizzes(quizzes);
-  // };
-  // useEffect(() => {
-  //   fetchQuizzes();
-  // }, []);
+  const updateQuiz = async () => {
+    const newQuiz: Quiz = await client.updateQuiz(quiz);
+    setQuiz(newQuiz);
+  };
 
   const fetchQuizzesForCourse = async () => {
     if (courseId) {
-      const quizzes = await client.findQuizzesForCourse(courseId);
+      const quizzes = await client.findAllQuizzes();
       console.log("quizzes" + quizzes);
       setQuizzes(quizzes);
     }
@@ -70,7 +76,12 @@ function QuizList() {
     fetchQuizzesForCourse();
   }, []);
 
-  console.log(quizzes);
+  //TODO: this isnt working
+  function publishQuiz() {
+    setQuiz({ ...quiz, published: true });
+    updateQuiz();
+    setFlag((flag) => !flag);
+  }
 
   return (
     <>
@@ -97,8 +108,11 @@ function QuizList() {
           <div>
             <FaEllipsisV className="me-2" /> QUIZZES
             <span className="float-end">
-              <FaCheckCircle className="text-success" />
-
+              {quiz.published ? (
+                <FaCheckCircle className="text-success" />
+              ) : (
+                <FaTimesCircle className="text-danger" />
+              )}
               <FaPlusCircle className="ms-2" />
 
               <FaEllipsisV className="ms-2" />
@@ -115,11 +129,15 @@ function QuizList() {
 
                 <div className="row">
                   <div className="col-2">
-                    <p className="multipleModules">{quiz.availability}</p>
+                    <p className="multipleModules">
+                      Available Until {quiz.availableDate.toString()}{" "}
+                    </p>
                   </div>
 
                   <div className="col">
+                    <p>{quiz.availability}</p>
                     <p>Due {quiz.dueDate.toString()}</p>
+                    <p>11 points</p>
                     {/* <p>{String(quiz.points)} points</p> TODO: make this a sum of all question points*/}
 
                     <p>{String(quiz.numberOfQuestions)} questions</p>
@@ -127,7 +145,11 @@ function QuizList() {
                 </div>
 
                 <span className="float-end">
-                  <FaCheckCircle className="text-success" />
+                  {quiz.published ? (
+                    <FaCheckCircle className="text-success" />
+                  ) : (
+                    <FaTimesCircle className="text-danger" />
+                  )}
 
                   <Dropdown>
                     <Dropdown.Toggle
@@ -151,7 +173,7 @@ function QuizList() {
                         Delete
                       </Dropdown.Item>
 
-                      <Dropdown.Item onClick={() => deleteQuiz(quiz)}>
+                      <Dropdown.Item onClick={() => publishQuiz()}>
                         Publish
                       </Dropdown.Item>
                     </Dropdown.Menu>
