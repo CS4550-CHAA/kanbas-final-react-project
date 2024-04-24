@@ -96,7 +96,10 @@ function Questions() {
                     </div>
                 ), [])}
             <div className="d-grid gap-2 d-md-flex justify-content-md-center">
-                <button className="quiz-btn" type="button" onClick={() => setNewQuestion(true)}>+ New Question</button>
+                <button className="quiz-btn" type="button" onClick={() => {
+                    setQuestion({...question, type: 'Multiple Choice'});
+                    setNewQuestion(true);
+                }}>+ New Question</button>
                 <button className="quiz-btn" type="button">+ New Question Group</button>
                 <button className="quiz-btn" type="button"><IoSearch /> Find Questions</button>
             </div>

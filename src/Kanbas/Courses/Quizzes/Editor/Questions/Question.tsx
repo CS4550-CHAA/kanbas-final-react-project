@@ -20,7 +20,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
     const [answers, setAnswers] = useState<any[]>([]);
     const [answer, setAnswer] = useState({
         _id: '',
-        answer: '',
+        answer: 'answer',
         isCorrect: false,
         questionId: question.id
     });
@@ -152,9 +152,8 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                             <Text color={textColor}>{labelText}</Text>
                             {(answerEdit && (answer._id === currAnswer._id)) ? <input value={answer?.answer} onChange={(e) => setAnswer({...answer, answer: e.target.value})} /> : <Text>{currAnswer.answer}</Text>}
                             {(answerEdit && (answer._id === currAnswer._id)) ? <button className="quiz-btn" type="button" onClick={() => editAnswer(answer)}><IoIosCheckmarkCircleOutline /></button> : <button className="quiz-btn" type="button" onClick={() => selectAnswer(currAnswer._id)}><BsPencil /></button>}
-                            <button className="quiz-btn" type="button"><BsTrash3Fill /></button>
                             <button className="quiz-btn" type="button"
-                                    onClick={() => deleteAnswer(answer._id)}>
+                                    onClick={() => deleteAnswer(currAnswer._id)}>
                                 <BsTrash3Fill/></button>
                         </HStack>
                     );
