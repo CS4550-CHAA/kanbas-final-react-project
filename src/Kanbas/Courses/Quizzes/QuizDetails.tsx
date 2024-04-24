@@ -9,6 +9,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { Quiz } from "./client";
 import * as client from "./client";
+import * as questionClient from './questionClient'
 
 function QuizDetails() {
   const { courseId } = useParams();
@@ -35,22 +36,37 @@ function QuizDetails() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
+  const [points, setPoints] = useState(0)
   const [flag, setFlag] = useState(false);
 
   const getQuizById = async (id: any) => {
     const newQuiz = await client.findQuizById(id);
     setQuiz(newQuiz);
   };
+
+  const getQuizPoints = async (id: any) => {
+    let totalPoints = 0;
+    if (quizId) {
+      const allQuestions = await questionClient.findAllQuestionsForQuiz(id);
+      allQuestions.forEach((question: any) => {
+        totalPoints += question.points;
+    });
+    }
+    setPoints(totalPoints)
+  }
+
   useEffect(() => {
     if (quizId) {
       getQuizById(quizId);
+      getQuizPoints(quizId);
     }
-  }, []);
+  }, [quizId]);
 
   const updateQuiz = async () => {
     const newQuiz = await client.updateQuiz(quiz);
     setQuiz(newQuiz);
   };
+
 
   const publishQuiz = async () => {
     setQuiz({ ...quiz, published: true });
@@ -124,7 +140,7 @@ function QuizDetails() {
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label>{quiz?.quizType}</label>
-          <label>10</label>
+          <label>{points}</label>
           <label>{/* <p>{String(quiz.points)}</p> */}</label>
           <label>QUIZZES</label>
           <label>{quiz?.shuffleAnswers}</label>
