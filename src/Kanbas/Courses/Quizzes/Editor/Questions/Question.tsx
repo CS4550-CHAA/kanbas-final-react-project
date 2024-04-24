@@ -71,7 +71,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
             }
         };
         fetchAnswersForQuestion();
-    }, [question, answers])
+    }, [question])
 
     const fetchAnswers = async() => {
         const answers = await answerClient.findAllAnswersForQuestion(question.id);
