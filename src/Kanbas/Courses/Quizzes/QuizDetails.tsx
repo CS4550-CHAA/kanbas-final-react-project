@@ -123,17 +123,17 @@ function QuizDetails() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label>{quiz?.quizType}</label>
-          <label>10</label>
-          <label>{/* <p>{String(quiz.points)}</p> */}</label>
-          <label>QUIZZES</label>
-          <label>{quiz?.shuffleAnswers}</label>
-          <label>{String(quiz?.timeLimit)}</label>
-          <label>{quiz?.multipleAttempts}</label>
-          <label>{quiz?.showCorrectAnswers}</label>
-          <label>{quiz?.oneQuestionAtATime}</label>
-          <label>{quiz?.webCamRequired}</label>
-          <label>{quiz?.lockQuestionsAfterAnswering}</label>
+          <label>{quiz?.quizType} {' '}</label>
+          <label>10 {' '}</label>
+          <label>{/* <p>{String(quiz.points)}</p> */} {' '}</label>
+          <label>QUIZZES {' '}</label>
+          <label>{quiz?.shuffleAnswers} {' '}</label>
+          <label>{String(quiz?.timeLimit)} {' '}</label>
+          <label>{quiz?.multipleAttempts} {' '}</label>
+          <label>{quiz?.showCorrectAnswers} {' '}</label>
+          <label>{quiz?.oneQuestionAtATime} {' '}</label>
+          <label>{quiz?.webCamRequired} {' '}</label>
+          <label>{quiz?.lockQuestionsAfterAnswering} {' '}</label>
         </div>
       </div>
 
