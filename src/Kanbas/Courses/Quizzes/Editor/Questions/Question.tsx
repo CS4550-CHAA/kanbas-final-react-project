@@ -14,10 +14,12 @@ interface QuestionProps {
     setEditMode: (value: boolean) => void;
     createQuestion: (value: any) => void;
     editMode: boolean;
+    answers: any[];
+    setAnswers: (value: any) => void;
 }
 
-export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode }: QuestionProps) {
-    const [answers, setAnswers] = useState<any[]>([]);
+export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode, answers, setAnswers }: QuestionProps) {
+
     const [answer, setAnswer] = useState({
         _id: '',
         answer: 'answer',
@@ -49,9 +51,11 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
         setAnswers(answers.filter((a: answerClient.Answer) => a._id !== answerId));
     };
 
-    const createAnswer = async (questionId : string) => {
+    const createAnswer = async () => {
         const newAnswer = {
-            answer: answer.answer, isCorrect: answer.isCorrect, questionId: questionId
+            answer: answer.answer,
+            isCorrect: answer.isCorrect,
+            questionId: question.id
         };
         const response = await answerClient.createAnswer(newAnswer);
         setAnswers([...answers, response]);
@@ -128,7 +132,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                                 labelText = 'Possible Answer';
                                 textColor = 'green';
                                 break;
-                            case 'True or False':
+                            case 'True/False':
                                 textColor = currAnswer.correct ? 'green' : 'red';
                                 return (
                                     <HStack key={currAnswer._id}>
@@ -159,7 +163,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                     );
                 })}
                 <Flex justifyContent="flex-end" mb={4}>
-                <button className="quiz-btn" type="button" onClick = {() => createAnswer(question.id)}>Add another answer</button>
+                <button className="quiz-btn" type="button" onClick = {() => createAnswer()}>Add another answer</button>
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>
