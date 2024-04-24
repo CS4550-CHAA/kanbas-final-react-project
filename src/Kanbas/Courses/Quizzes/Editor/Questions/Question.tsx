@@ -14,13 +14,15 @@ interface QuestionProps {
     setEditMode: (value: boolean) => void;
     createQuestion: (value: any) => void;
     editMode: boolean;
+    answers: any[];
+    setAnswers: (value: any) => void;
 }
 
-export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode }: QuestionProps) {
-    const [answers, setAnswers] = useState<any[]>([]);
+export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode, answers, setAnswers }: QuestionProps) {
+
     const [answer, setAnswer] = useState({
         _id: '',
-        answer: '',
+        answer: 'answer',
         isCorrect: false,
         questionId: question.id
     });
@@ -44,15 +46,22 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
         setAnswerEdit(false);
     };
 
-    // const deleteQuestion = async (questionId: string) => {
-    //     await questionClient.deleteQuestion(questionId);
-    //     setQuestions(questions.filter((q) => q._id !== questionId));
-    // };
+    const deleteAnswer = async (answerId: string) => {
+        await answerClient.deleteAnswer(answerId);
+        setAnswers(answers.filter((a: answerClient.Answer) => a._id !== answerId));
+    };
 
-    // const createAnswer = async () => {
-    //     const response = await answerClient.createAnswer(answer);
-    //     setAnswers(answers.filter((a: answerClient.Answer) => a._id !== response.data._id));
-    // };
+    const createAnswer = async () => {
+        const newAnswer = {
+            answer: answer.answer,
+            isCorrect: answer.isCorrect,
+            questionId: question.id
+        };
+        const response = await answerClient.createAnswer(newAnswer);
+        setAnswers([...answers, response]);
+        await fetchAnswers();
+    };
+
 
     useEffect(() => {
         const fetchAnswersForQuestion = async () => {
@@ -63,6 +72,11 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
         };
         fetchAnswersForQuestion();
     }, [question, answers])
+
+    const fetchAnswers = async() => {
+        const answers = await answerClient.findAllAnswersForQuestion(question.id);
+        setAnswers(answers);
+    }
 
     return (
         <>
@@ -118,7 +132,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                                 labelText = 'Possible Answer';
                                 textColor = 'green';
                                 break;
-                            case 'True or False':
+                            case 'True/False':
                                 textColor = currAnswer.correct ? 'green' : 'red';
                                 return (
                                     <HStack key={currAnswer._id}>
@@ -135,19 +149,21 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                             default:
                                 return <Text key={answer._id}>Invalid question type</Text>;
                         }
-                    }  
+                    }
 
                     return (
                         <HStack key={currAnswer._id}>
                             <Text color={textColor}>{labelText}</Text>
                             {(answerEdit && (answer._id === currAnswer._id)) ? <input value={answer?.answer} onChange={(e) => setAnswer({...answer, answer: e.target.value})} /> : <Text>{currAnswer.answer}</Text>}
                             {(answerEdit && (answer._id === currAnswer._id)) ? <button className="quiz-btn" type="button" onClick={() => editAnswer(answer)}><IoIosCheckmarkCircleOutline /></button> : <button className="quiz-btn" type="button" onClick={() => selectAnswer(currAnswer._id)}><BsPencil /></button>}
-                            <button className="quiz-btn" type="button"><BsTrash3Fill /></button>
+                            <button className="quiz-btn" type="button"
+                                    onClick={() => deleteAnswer(currAnswer._id)}>
+                                <BsTrash3Fill/></button>
                         </HStack>
                     );
                 })}
                 <Flex justifyContent="flex-end" mb={4}>
-                    <button className="quiz-btn" type="button">Add another answer</button>
+                <button className="quiz-btn" type="button" onClick = {() => createAnswer()}>Add another answer</button>
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>

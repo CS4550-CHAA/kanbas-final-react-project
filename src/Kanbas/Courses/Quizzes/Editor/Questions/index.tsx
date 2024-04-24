@@ -7,6 +7,8 @@ import { BsTrash3Fill, BsPencil } from "react-icons/bs";
 import { useParams } from "react-router";
 import { Question } from "../../questionClient";
 import * as questionClient from '../../questionClient';
+import * as answerClient from '../../answerClient';
+
 
 function Questions() {
     const { quizId } = useParams();
@@ -21,6 +23,7 @@ function Questions() {
     })
     const [newQuestion, setNewQuestion] = useState(false);
     const [editMode, setEditMode] = useState(false);
+    const [answers, setAnswers] = useState<any[]>([]);
 
     const selectQuestion = async (questionId: string) => {
         console.log(questionId)
@@ -45,12 +48,27 @@ function Questions() {
     };
 
     const createQuestion = async (question: any) => {
-        const questionId = "question" + Math.random().toString(16).slice(2)
-        const questionWithId = { ...question, id: questionId, quizId: quizId};
-        const response = await questionClient.createQuestion(questionWithId)
+        const tempQuestionId = "temp" + Math.random().toString(16).slice(2);
+        const questionWithId = { ...question, id: tempQuestionId, quizId: quizId, type: 'Multiple Choice'};
+        setQuestion(questionWithId);
+        setQuestions([...questions, questionWithId]);
+        setNewQuestion(true);
+    };
+
+    const saveQuestion = async (question: any) => {
+        const realQuestionId = "question" + Math.random().toString(16).slice(2);
+        const questionWithRealId = { ...question, id: realQuestionId };
+        const response = await questionClient.createQuestion(questionWithRealId);
         setQuestion(response.data);
-        setQuestions([...questions, question]);
+        setQuestions(questions.map((q) =>
+            (q.id === question.id ? questionWithRealId : q)));
         setNewQuestion(false);
+        answers.forEach(async (answer) => {
+            if (answer.questionId === question.id) {
+                const updatedAnswer = { ...answer, questionId: realQuestionId };
+                await answerClient.updateAnswer(updatedAnswer);
+            }
+        });
     };
 
     useEffect(() => {
@@ -96,13 +114,17 @@ function Questions() {
                     </div>
                 ), [])}
             <div className="d-grid gap-2 d-md-flex justify-content-md-center">
-                <button className="quiz-btn" type="button" onClick={() => setNewQuestion(true)}>+ New Question</button>
+                <button className="quiz-btn" type="button" onClick={() => {
+                    setQuestion({...question, type: 'Multiple Choice'});
+                    createQuestion(question);
+                    setNewQuestion(true);
+                }}>+ New Question</button>
                 <button className="quiz-btn" type="button">+ New Question Group</button>
                 <button className="quiz-btn" type="button"><IoSearch /> Find Questions</button>
             </div>
             <hr />
 
-            {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode}/>}
+            {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode} answers={answers} setAnswers={setAnswers} />}
             <div className="d-grid gap-2 d-md-flex justify-content-between">
                 <label>
                     <input type="checkbox" />
@@ -110,11 +132,10 @@ function Questions() {
                 </label>
                 <div className="d-grid d-md-flex float-end">
                     <button className="quiz-btn" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>
-                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Save & Publish</button>
-                    <button className="quiz-btn-danger" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Save</button>
+                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : saveQuestion(question)}>Save & Publish</button>
+                    <button className="quiz-btn-danger" type="button" onClick={() => editMode ? editQuestion(question) : saveQuestion(question)}>Save</button>
                 </div>
             </div>
-
             <hr />
         </div>
     );
