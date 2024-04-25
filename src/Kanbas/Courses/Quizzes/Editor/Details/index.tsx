@@ -5,6 +5,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
+import Nav from "../Nav";
 function QuizDetailsEditor() {
   const { courseId } = useParams();
   const { quizId } = useParams();
@@ -89,6 +90,7 @@ function QuizDetailsEditor() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <Nav />
       <input
         value={String(quiz?.title)}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
