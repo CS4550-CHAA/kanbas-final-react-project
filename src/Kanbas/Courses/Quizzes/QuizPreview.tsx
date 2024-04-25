@@ -4,7 +4,7 @@ import { Quiz } from "./client";
 import { useParams } from "react-router";
 import * as client from "./client";
 import * as questionClient from "./questionClient";
-
+import * as answerClient from "./answerClient"
 import { Card, CardBody, CardHeader, HStack, Text } from "@chakra-ui/react";
 import { BsPencil, BsTrash3Fill } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -36,6 +36,25 @@ function QuizPreview() {
     untilDate: new Date(0),
   });
   const [questions, setQuestions] = useState<any[]>([]);
+  const [questionAnswers, setQuestionAnswers] = useState<any>({});
+
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      const newQuestionAnswers: any = {};
+      for (const question of questions) {
+        try {
+          const res = await findAnswersForQuiz(question.id);
+          newQuestionAnswers[question.id] = res;
+        } catch (error) {
+          console.error(`Error fetching answers for question ${question.id}:`, error);
+          newQuestionAnswers[question.id] = [];
+        }
+      }
+      setQuestionAnswers(newQuestionAnswers);
+    };
+
+    fetchAnswers();
+  }, [questions]);
 
   const fetchQuiz = async () => {
     if (quizId) {
@@ -61,6 +80,11 @@ function QuizPreview() {
     fetchTheQuiz();
   }, []);
 
+  const findAnswersForQuiz = async (id: any) => {
+      const res = await answerClient.findAllAnswersForQuestion(id);
+      return res;
+  };
+
   const questionNumbers = [1, 2, 3];
   //TODO:fix this
   // Array.from(
@@ -69,28 +93,15 @@ function QuizPreview() {
   // );
   return (
     <div>
-      <h3>{quiz.title}</h3>
-      <div
-        style={{
-          backgroundColor: "F7ECE9",
-          color: "#B1330A",
-          paddingTop: "15px",
-          paddingBottom: "15px",
-          paddingLeft: "15px",
-        }}
-      >
-        <label>
-          <FaExclamationCircle /> This is a preview of the published version of
-          the quiz
-        </label>
-      </div>
+      <h1>{quiz.title}</h1>
+      <label>This is a preview of the published version of the quiz</label>
       <br />
       <label>Started: Nov 29 at 8:19 am</label>
       <h1>Quiz Instructions</h1>
       <hr />
       {/* <button style={{ width: "100%" }}>
         <Link
-          to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor/Details`}
+          to={/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor/Details}
           style={{ color: "white", textDecoration: "none" }}
         >
           <FaPen />
@@ -99,41 +110,88 @@ function QuizPreview() {
       </button> */}
       <h2>Questions:</h2>
       <ul>
-        {questions.map((question: Question) => (
-          <div key={question.id} className="card">
-            <Card>
-              <CardHeader backgroundColor="lightGrey">
-                <HStack
-                  justifyContent="space-between"
-                  alignItems="center"
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    paddingBottom: "0px",
-                  }}
-                >
-                  <HStack>
-                    <Text>{question?.title}</Text>
-                  </HStack>
+      {questions.map((question: Question) => (
+  <div key={question.id} className="card">
+    <Card>
+      <CardHeader backgroundColor="lightGrey">
+        <HStack
+          justifyContent="space-between"
+          alignItems="center"
+          style={{
+            width: "100%",
+            padding: "10px",
+            paddingBottom: "0px",
+          }}
+        >
+          <HStack>
+            <Text>{question?.title}</Text>
+          </HStack>
 
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Text>{question.points} pts</Text>
-                  </div>
-                </HStack>
-              </CardHeader>
-
-              <CardBody
-                style={{
-                  padding: "10px",
-                  paddingBottom: "0px",
-                  backgroundColor: "white",
-                }}
-              >
-                <Text>{question.question}</Text>
-              </CardBody>
-            </Card>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Text>{question.points} pts</Text>
           </div>
-        ))}
+        </HStack>
+      </CardHeader>
+
+      <CardBody
+        style={{
+          padding: "10px",
+          paddingBottom: "0px",
+          backgroundColor: "white",
+        }}
+      >
+        {question.type === 'Multiple Choice' && (
+          <div>
+            <p>{question.question}</p>
+            <ul>
+            {questionAnswers[question.id] && (
+  <ul>
+    {questionAnswers[question.id].map((choice: any, index: any) => (
+      <li key={index} style={{ color: choice.isCorrect ? 'green' : 'red' }}>
+        {choice.answer}
+      </li>
+    ))}
+  </ul>
+)}
+
+            </ul>
+          </div>
+        )}
+        {question.type === 'Fill in the Blanks' && (
+          <div>
+            <p>{question.question}</p>
+            {questionAnswers[question.id] && (
+  <ul>
+    {questionAnswers[question.id].map((choice: any, index: any) => (
+     <li key={index} >
+        Blank {index + 1}: {choice.answer}
+      </li>
+    ))}
+  </ul>
+)}
+          </div>
+        )}
+        {question.type === 'True/False' && (
+          <div>
+            <p>{question.question}</p>
+            <div>
+            {questionAnswers[question.id] && (
+  <ul>
+    {questionAnswers[question.id].map((choice: any, index: any) => (
+      <li key={index} style={{ color: choice.isCorrect ? 'green' : 'red' }}>
+        {choice.answer}
+      </li>
+    ))}
+  </ul>
+)}
+            </div>
+          </div>
+        )}
+      </CardBody>
+    </Card>
+  </div>
+))}
+
       </ul>
     </div>
   );
