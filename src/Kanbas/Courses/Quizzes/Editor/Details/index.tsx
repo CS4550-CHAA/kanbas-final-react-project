@@ -5,6 +5,9 @@ import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
+import Nav from "../Nav";
+import * as questionClient from "../../questionClient";
+import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
 function QuizDetailsEditor() {
   const { courseId } = useParams();
   const { quizId } = useParams();
@@ -32,6 +35,24 @@ function QuizDetailsEditor() {
     untilDate: new Date(0),
   });
   // const [flag, setFlag] = useState(false);
+  const [points, setPoints] = useState(0);
+
+  const getQuizPoints = async (id: any) => {
+    let totalPoints = 0;
+    if (quizId) {
+      const allQuestions = await questionClient.findAllQuestionsForQuiz(id);
+      allQuestions.forEach((question: any) => {
+        totalPoints += question.points;
+      });
+    }
+    setPoints(totalPoints);
+  };
+
+  useEffect(() => {
+    if (quizId) {
+      getQuizPoints(quizId);
+    }
+  }, [quizId]);
 
   const fetchQuiz = async () => {
     if (quizId) {
@@ -46,16 +67,6 @@ function QuizDetailsEditor() {
     }
     fetchTheQuiz();
   }, []);
-
-  // const createQuiz = async () => {
-  //   try {
-  //     const newQuiz = await client.createQuiz(quiz);
-  //     setQuiz({ ...newQuiz, id: "Q" + Math.random().toString(4).slice(2) });
-  //     setQuizzes([newQuiz, ...quizzes]);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   const deleteQuiz = async (quiz: Quiz) => {
     try {
@@ -89,64 +100,30 @@ function QuizDetailsEditor() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <Nav />
       <input
         value={String(quiz?.title)}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
       />
       <br />
       <p> Quiz Instructions: </p>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingBottom: "15px",
-        }}
-      >
-        <div>
-          <label style={{ paddingRight: "50px" }}>Edit</label>
-          <label style={{ paddingRight: "50px" }}>View</label>
-          <label style={{ paddingRight: "50px" }}>Insert</label>
-          <label style={{ paddingRight: "50px" }}>Format</label>
-          <label style={{ paddingRight: "50px" }}>Tools</label>
-          <label style={{ paddingRight: "50px" }}>Table</label>
-        </div>
-        <label style={{ paddingRight: "50px" }}>100%</label>
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <label style={{ paddingRight: "50px" }}>
-          12 pt <FaChevronDown />
-        </label>
-        <label style={{ paddingRight: "50px" }}>
-          Paragraph <FaChevronDown />
-        </label>
-        <label style={{ paddingRight: "50px" }}> | </label>
-        <label style={{ paddingRight: "50px" }}> B </label>
-        <label style={{ paddingRight: "50px" }}> I </label>
-        <label style={{ paddingRight: "50px" }}> U </label>
-        <label style={{ paddingRight: "50px" }}>
-          {" "}
-          A <FaChevronDown />{" "}
-        </label>
-        <label style={{ paddingRight: "50px" }}>
-          {" "}
-          <FaPen /> <FaChevronDown />{" "}
-        </label>
-        <label style={{ paddingRight: "50px" }}>
-          {" "}
-          T2 <FaChevronDown />{" "}
-        </label>
-        <label style={{ paddingRight: "50px" }}> | </label>
-        <label style={{ paddingRight: "50px" }}>
-          {" "}
-          <FaEllipsisV /> <FaChevronDown />{" "}
-        </label>
-      </div>
-      <textarea
-        value={String(quiz.description)}
-        onChange={(e) => setQuiz({ ...quiz, description: e.target.value })}
-      />
+      <EditorProvider>
+                    <Editor value={String(quiz?.description)} onChange={(e) => setQuiz({ ...quiz, description: e.target.value })}
+        >
+                        <Toolbar>
+                            <BtnUndo />
+                            <BtnRedo />
+                            <BtnStrikeThrough />
+                            <BtnBold />
+                            <BtnItalic />
+                            <BtnBulletList />
+                            <BtnNumberedList />
+                            <BtnLink />
+                            <BtnStyles />
+                            <BtnClearFormatting />
+                        </Toolbar>
+                    </Editor>
+                </EditorProvider>
       <div
         style={{
           display: "flex",
@@ -230,6 +207,8 @@ function QuizDetailsEditor() {
         />
         <label htmlFor="shuffle">Shuffle Answers</label>
       </div>
+
+      <p>{points} Points</p>
 
       <div className="flex-row">
         <div style={{ display: "flex", flexDirection: "row" }}>
@@ -384,7 +363,7 @@ function QuizDetailsEditor() {
             <button
               className="btn btn-light"
               style={{ backgroundColor: "lightgray", marginRight: "10px" }}
-              onClick={() => deleteQuiz(quiz)}
+              // onClick={() => deleteQuiz(quiz)}
             >
               {" "}
               <Link
@@ -410,7 +389,7 @@ function QuizDetailsEditor() {
             <button onClick={updateQuiz} className="btn btn-danger">
               {" "}
               <Link
-                to={`/Kanbas/Courses/${courseId}/Quizzes/`}
+                to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}`}
                 style={{ color: "white", textDecoration: "none" }}
               >
                 Save
