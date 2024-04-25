@@ -231,7 +231,6 @@ function QuizDetailsEditor() {
         <label htmlFor="shuffle">Shuffle Answers</label>
       </div>
 
-      {/* TODO: make the time limit and minutes in the same row  */}
       <div className="flex-row">
         <div style={{ display: "flex", flexDirection: "row" }}>
           {" "}
@@ -264,6 +263,28 @@ function QuizDetailsEditor() {
         />
         <label htmlFor="attempts">Allow Multiple Attemps</label>
       </div>
+
+      <div>
+        {" "}
+        <input
+          type="checkbox"
+          id="One"
+          // checked={quiz.oneQuestionAtATime === "Yes"}
+          // onChange={() =>
+          //   quiz.oneQuestionAtATime === "Yes"
+          //     ? setQuiz({ ...quiz, oneQuestionAtATime: "No" })
+          //     : setQuiz({ ...quiz, oneQuestionAtATime: "Yes" })
+          // }
+        />
+        <label htmlFor="One">Show Correct Answers</label>
+      </div>
+
+      <label htmlFor="access">Access Code</label>
+      <textarea
+        id="access"
+        value={String(quiz.accessCode)}
+        onChange={(e) => setQuiz({ ...quiz, accessCode: e.target.value })}
+      />
 
       <div>
         {" "}
