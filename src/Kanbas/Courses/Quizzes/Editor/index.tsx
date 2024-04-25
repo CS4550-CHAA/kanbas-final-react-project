@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Nav from "./Nav";
 import { FaEllipsisV } from "react-icons/fa";
@@ -6,12 +6,28 @@ import ConditionalPublished from "../ConditionalPublished";
 import { Navigate, Route, Routes } from "react-router";
 import Questions from "./Questions";
 import Details from "./Details";
+import * as questionClient from '../questionClient'
 
 function Quizzes() {
-  const { pathname } = useLocation();
-  const [questions, setQuestions] = useState([]);
   const [points, setPoints] = useState(0);
-  const { courseId } = useParams();
+  const { quizId } = useParams();
+
+  const getQuizPoints = async (id: any) => {
+    let totalPoints = 0;
+    if (quizId) {
+      const allQuestions = await questionClient.findAllQuestionsForQuiz(id);
+      allQuestions.forEach((question: any) => {
+        totalPoints += question.points;
+    });
+    }
+    setPoints(totalPoints)
+  }
+
+  useEffect(() => {
+    if (quizId) {
+      getQuizPoints(quizId);
+    }
+  }, [quizId]);
 
   return (
     <div>
