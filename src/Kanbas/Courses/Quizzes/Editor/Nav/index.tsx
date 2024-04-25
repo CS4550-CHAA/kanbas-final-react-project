@@ -10,7 +10,11 @@ function Nav() {
       <nav className="nav nav-tabs mt-2">
         <Link
           to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor/Details`}
-          className={`nav-link ${pathname.includes("Details") ? "active" : ""}`}
+          className={`nav-link ${
+            pathname.includes("Details") || !pathname.includes("Questions")
+              ? "active"
+              : ""
+          }`}
         >
           Details
         </Link>

@@ -5,6 +5,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
+import Nav from "../Nav";
 import * as questionClient from "../../questionClient";
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
 function QuizDetailsEditor() {
@@ -99,6 +100,7 @@ function QuizDetailsEditor() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <Nav />
       <input
         value={String(quiz?.title)}
         onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}

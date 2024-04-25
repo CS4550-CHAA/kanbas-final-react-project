@@ -9,7 +9,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { Quiz } from "./client";
 import * as client from "./client";
-import * as questionClient from './questionClient'
+import * as questionClient from "./questionClient";
 
 function QuizDetails() {
   const { courseId } = useParams();
@@ -36,7 +36,7 @@ function QuizDetails() {
     availableDate: new Date(0),
     untilDate: new Date(0),
   });
-  const [points, setPoints] = useState(0)
+  const [points, setPoints] = useState(0);
   const [flag, setFlag] = useState(false);
 
   const getQuizById = async (id: any) => {
@@ -50,10 +50,10 @@ function QuizDetails() {
       const allQuestions = await questionClient.findAllQuestionsForQuiz(id);
       allQuestions.forEach((question: any) => {
         totalPoints += question.points;
-    });
+      });
     }
-    setPoints(totalPoints)
-  }
+    setPoints(totalPoints);
+  };
 
   useEffect(() => {
     if (quizId) {
@@ -66,7 +66,6 @@ function QuizDetails() {
     const newQuiz = await client.updateQuiz(quiz);
     setQuiz(newQuiz);
   };
-
 
   const publishQuiz = async () => {
     setQuiz({ ...quiz, published: true });
@@ -100,7 +99,9 @@ function QuizDetails() {
           </Link>
         </button>
         <button>
-          <Link to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor`}>
+          <Link
+            to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}/Editor/Details`}
+          >
             <FaPen /> Edit
           </Link>
         </button>
