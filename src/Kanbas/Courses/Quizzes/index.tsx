@@ -108,7 +108,7 @@ function QuizList() {
           <div>
             <FaEllipsisV className="me-2" /> QUIZZES
             <span className="float-end">
-              {quiz.published ? (
+              {flag ? (
                 <FaCheckCircle className="text-success" />
               ) : (
                 <FaTimesCircle className="text-danger" />
@@ -145,7 +145,7 @@ function QuizList() {
                 </div>
 
                 <span className="float-end">
-                  {quiz.published ? (
+                  {flag ? (
                     <FaCheckCircle className="text-success" />
                   ) : (
                     <FaTimesCircle className="text-danger" />
@@ -173,9 +173,15 @@ function QuizList() {
                         Delete
                       </Dropdown.Item>
 
-                      <Dropdown.Item onClick={() => publishQuiz()}>
-                        Publish
-                      </Dropdown.Item>
+                      {flag ? (
+                        <Dropdown.Item onClick={() => publishQuiz()}>
+                          Unpublish
+                        </Dropdown.Item>
+                      ) : (
+                        <Dropdown.Item onClick={() => publishQuiz()}>
+                          Publish
+                        </Dropdown.Item>
+                      )}
                     </Dropdown.Menu>
                   </Dropdown>
                 </span>

@@ -117,6 +117,7 @@ function QuizDetails() {
           <label>Time Limit</label>
           <label>Multiple Attempts</label>
           <label>Show Correct Answers</label>
+          <label>Access Code</label>
           <label>One Question at a Time</label>
           <label>Webcam Required</label>
           <label>Lock Questions After Answering</label>
@@ -131,6 +132,7 @@ function QuizDetails() {
           <label>{String(quiz?.timeLimit)}</label>
           <label>{quiz?.multipleAttempts}</label>
           <label>{quiz?.showCorrectAnswers}</label>
+          <label>{quiz?.accessCode}</label>
           <label>{quiz?.oneQuestionAtATime}</label>
           <label>{quiz?.webCamRequired}</label>
           <label>{quiz?.lockQuestionsAfterAnswering}</label>
