@@ -81,13 +81,13 @@ function QuizDetails() {
       <div style={{ display: "flex", flexDirection: "row" }}>
         <button
           style={
-            quiz.published
+            quiz?.published
               ? { backgroundColor: "red", color: "white" }
               : { backgroundColor: "green", color: "white" }
           }
           onClick={() => publishQuiz()}
         >
-          <FaCheckCircle /> {quiz.published ? "Unpublish" : "Publish"}
+          <FaCheckCircle /> {quiz?.published ? "Unpublish" : "Publish"}
         </button>
 
         <button>
