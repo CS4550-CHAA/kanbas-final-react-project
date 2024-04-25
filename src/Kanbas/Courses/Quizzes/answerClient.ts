@@ -14,6 +14,7 @@ export interface Answer {
 
 export const updateAnswer = async (answer: any) => {
   const response = await api.put(`${ANSWERS_API}/${answer._id}`, answer);
+  console.log("update quiz works" + response.data);
   return response.data;
 };
 

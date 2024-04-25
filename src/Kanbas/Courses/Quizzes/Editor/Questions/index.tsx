@@ -24,7 +24,7 @@ function Questions() {
     const [newQuestion, setNewQuestion] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [answers, setAnswers] = useState<any[]>([]);
-
+    const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
     const selectQuestion = async (questionId: string) => {
         console.log(questionId)
         const res = await questionClient.findQuestionById(questionId);
@@ -124,7 +124,7 @@ function Questions() {
             </div>
             <hr />
 
-            {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode} answers={answers} setAnswers={setAnswers} />}
+            {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode} answers={answers} setAnswers={setAnswers} selectedAnswerId={selectedAnswerId} setSelectedAnswerId={setSelectedAnswerId} saveQuestion={saveQuestion} />}
             <div className="d-grid gap-2 d-md-flex justify-content-between">
                 <label>
                     <input type="checkbox" />
