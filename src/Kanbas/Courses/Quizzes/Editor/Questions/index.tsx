@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./index.css";
+import './index.css';
 import QuestionEditor from "./Question";
 import { IoSearch } from "react-icons/io5";
 import { Card, CardBody, CardHeader, HStack, Text } from "@chakra-ui/react";
@@ -25,6 +25,7 @@ function Questions() {
   const [newQuestion, setNewQuestion] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [answers, setAnswers] = useState<any[]>([]);
+  const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
 
   const selectQuestion = async (questionId: string) => {
     console.log(questionId);
@@ -174,19 +175,7 @@ function Questions() {
       </div>
       <hr />
 
-      {(editMode || newQuestion) && (
-        <QuestionEditor
-          createQuestion={createQuestion}
-          question={question}
-          setQuestion={setQuestion}
-          setNewQuestion={setNewQuestion}
-          editQuestion={editQuestion}
-          editMode={editMode}
-          setEditMode={setEditMode}
-          answers={answers}
-          setAnswers={setAnswers}
-        />
-      )}
+        {(editMode || newQuestion) && <QuestionEditor createQuestion={createQuestion} question={question} setQuestion={setQuestion} setNewQuestion={setNewQuestion} editQuestion={editQuestion} editMode={editMode} setEditMode={setEditMode} answers={answers} setAnswers={setAnswers} selectedAnswerId={selectedAnswerId} setSelectedAnswerId={setSelectedAnswerId} saveQuestion={saveQuestion} />}
       <div className="d-grid gap-2 d-md-flex justify-content-between">
         <label>
           <input type="checkbox" />

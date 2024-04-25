@@ -16,9 +16,12 @@ interface QuestionProps {
     editMode: boolean;
     answers: any[];
     setAnswers: (value: any) => void;
+    selectedAnswerId: string | null;
+    setSelectedAnswerId: (value: string | null) => void;
+    saveQuestion: (value: any) => void;
 }
 
-export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode, answers, setAnswers }: QuestionProps) {
+export default function QuestionEditor({ question, setQuestion, setNewQuestion, editQuestion, createQuestion, editMode, setEditMode, answers, setAnswers, selectedAnswerId, setSelectedAnswerId, saveQuestion }: QuestionProps) {
 
     const [answer, setAnswer] = useState({
         _id: '',
@@ -28,8 +31,16 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
     });
     const [answerEdit, setAnswerEdit] = useState(false);
 
-    const handleRadioChange = (index: number) => {
-        // to be implemented
+    const handleRadioChange = async (answerId: string) => {
+        setSelectedAnswerId(answerId);
+        const updatedAnswers = answers.map((a) =>
+            (a._id === answerId ? { ...a, isCorrect: true } : { ...a, isCorrect: false })
+        );
+        setAnswers(updatedAnswers);
+        for (const answer of updatedAnswers) {
+            console.log(`answer: ${JSON.stringify(answer)} is updated to ${answer.isCorrect}`);
+            await answerClient.updateAnswer(answer);
+        }
     };
 
     const selectAnswer = async (answerId: string) => {
@@ -71,7 +82,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
             }
         };
         fetchAnswersForQuestion();
-    }, [question])
+    }, [question, answers])
 
     const fetchAnswers = async() => {
         const answers = await answerClient.findAllAnswersForQuestion(question.id);
@@ -122,30 +133,23 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                 {answers && answers.map((currAnswer: any) => {
                     let textColor = '';
                     let labelText = '';
+                    let radioName = '';
                     if (question) {
                         switch (question.type) {
                             case 'Multiple Choice':
-                                labelText = currAnswer.correct ? 'Correct Answer' : 'Possible Answer';
-                                textColor = currAnswer.correct ? 'green' : 'red';
+                                labelText = currAnswer.isCorrect ? 'Correct Answer' : 'Possible Answer';
+                                textColor = currAnswer.isCorrect ? 'green' : 'red';
+                                radioName = 'multipleChoice';
                                 break;
                             case 'Fill in the Blanks':
                                 labelText = 'Possible Answer';
                                 textColor = 'green';
+                                radioName = 'fillInTheBlanks';
                                 break;
                             case 'True/False':
                                 textColor = currAnswer.correct ? 'green' : 'red';
-                                return (
-                                    <HStack key={currAnswer._id}>
-                                        <input
-                                            type="radio"
-                                            name={`correctAnswer-${currAnswer._id}`}
-                                            value={currAnswer.answer}
-                                            checked={currAnswer.correct}
-                                            onChange={() => handleRadioChange(currAnswer._id)}
-                                        />
-                                        <Text color={textColor}>{currAnswer.answer}</Text>
-                                    </HStack>
-                                );
+                                radioName = 'trueFalse';
+                                break;
                             default:
                                 return <Text key={answer._id}>Invalid question type</Text>;
                         }
@@ -153,9 +157,26 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
 
                     return (
                         <HStack key={currAnswer._id}>
-                            <Text color={textColor}>{labelText}</Text>
-                            {(answerEdit && (answer._id === currAnswer._id)) ? <input value={answer?.answer} onChange={(e) => setAnswer({...answer, answer: e.target.value})} /> : <Text>{currAnswer.answer}</Text>}
-                            {(answerEdit && (answer._id === currAnswer._id)) ? <button className="quiz-btn" type="button" onClick={() => editAnswer(answer)}><IoIosCheckmarkCircleOutline /></button> : <button className="quiz-btn" type="button" onClick={() => selectAnswer(currAnswer._id)}><BsPencil /></button>}
+                            <input
+                                type="radio"
+                                name={radioName}
+                                value={currAnswer.answer}
+                                checked={currAnswer._id === selectedAnswerId}
+                                onChange={() => handleRadioChange(currAnswer._id)}
+                            />
+                            <Text>{currAnswer._id === selectedAnswerId ? 'Correct Answer' : 'Possible Answer'}</Text>
+                            {(answerEdit && (answer._id === currAnswer._id)) ? <input value={answer?.answer}
+                                                                                      onChange={(e) => setAnswer({
+                                                                                          ...answer,
+                                                                                          answer: e.target.value
+                                                                                      })}/> :
+                                <Text color={{textColor}} >{currAnswer.answer}</Text>}
+                            {(answerEdit && (answer._id === currAnswer._id)) ?
+                                <button className="quiz-btn" type="button"
+                                        onClick={() => editAnswer(answer)}><IoIosCheckmarkCircleOutline/>
+                                </button> : <button className="quiz-btn" type="button"
+                                                    onClick={() => selectAnswer(currAnswer._id)}><BsPencil/>
+                                </button>}
                             <button className="quiz-btn" type="button"
                                     onClick={() => deleteAnswer(currAnswer._id)}>
                                 <BsTrash3Fill/></button>
@@ -167,7 +188,7 @@ export default function QuestionEditor({ question, setQuestion, setNewQuestion, 
                 </Flex>
                 <HStack>
                     <button className="quiz-btn-danger" type="button" onClick={() => {setNewQuestion(false); setEditMode(false);}}>Cancel</button>
-                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : createQuestion(question)}>Update Question</button>
+                    <button className="quiz-btn" type="button" onClick={() => editMode ? editQuestion(question) : saveQuestion(question)}>Update Question</button>
                 </HStack>
             </Box>
         </>
