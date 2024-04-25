@@ -5,8 +5,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import * as client from "../../client";
 import { Quiz } from "../../client";
 import { FaChevronDown, FaEllipsisV, FaPen } from "react-icons/fa";
+import * as questionClient from "../../questionClient";
 import { Editor, EditorProvider, Toolbar, BtnBold, BtnItalic, BtnBulletList, BtnClearFormatting, BtnNumberedList, BtnLink, BtnRedo, BtnStrikeThrough, BtnStyles, BtnUnderline, BtnUndo } from 'react-simple-wysiwyg';
-
 function QuizDetailsEditor() {
   const { courseId } = useParams();
   const { quizId } = useParams();
@@ -34,6 +34,24 @@ function QuizDetailsEditor() {
     untilDate: new Date(0),
   });
   // const [flag, setFlag] = useState(false);
+  const [points, setPoints] = useState(0);
+
+  const getQuizPoints = async (id: any) => {
+    let totalPoints = 0;
+    if (quizId) {
+      const allQuestions = await questionClient.findAllQuestionsForQuiz(id);
+      allQuestions.forEach((question: any) => {
+        totalPoints += question.points;
+      });
+    }
+    setPoints(totalPoints);
+  };
+
+  useEffect(() => {
+    if (quizId) {
+      getQuizPoints(quizId);
+    }
+  }, [quizId]);
 
   const fetchQuiz = async () => {
     if (quizId) {
@@ -48,16 +66,6 @@ function QuizDetailsEditor() {
     }
     fetchTheQuiz();
   }, []);
-
-  // const createQuiz = async () => {
-  //   try {
-  //     const newQuiz = await client.createQuiz(quiz);
-  //     setQuiz({ ...newQuiz, id: "Q" + Math.random().toString(4).slice(2) });
-  //     setQuizzes([newQuiz, ...quizzes]);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   const deleteQuiz = async (quiz: Quiz) => {
     try {
@@ -197,6 +205,8 @@ function QuizDetailsEditor() {
         />
         <label htmlFor="shuffle">Shuffle Answers</label>
       </div>
+
+      <p>{points} Points</p>
 
       <div className="flex-row">
         <div style={{ display: "flex", flexDirection: "row" }}>
@@ -351,7 +361,7 @@ function QuizDetailsEditor() {
             <button
               className="btn btn-light"
               style={{ backgroundColor: "lightgray", marginRight: "10px" }}
-              onClick={() => deleteQuiz(quiz)}
+              // onClick={() => deleteQuiz(quiz)}
             >
               {" "}
               <Link
@@ -377,7 +387,7 @@ function QuizDetailsEditor() {
             <button onClick={updateQuiz} className="btn btn-danger">
               {" "}
               <Link
-                to={`/Kanbas/Courses/${courseId}/Quizzes/`}
+                to={`/Kanbas/Courses/${courseId}/Quizzes/${quizId}`}
                 style={{ color: "white", textDecoration: "none" }}
               >
                 Save
