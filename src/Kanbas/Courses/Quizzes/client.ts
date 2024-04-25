@@ -1,25 +1,61 @@
 import axios from "axios";
-const API_BASE = process.env.REACT_APP_API_BASE;
+export const BASE_API = process.env.REACT_APP_API_BASE;
+export const Quizzes_API = `${BASE_API}/api/Quizzes`;
+const api = axios.create({
+  withCredentials: true,
+});
 
-const QUIZ_API = `${API_BASE}/api/quizzes`;
-const COURSES_API = `${API_BASE}/api/courses`;
+export interface Quiz {
+  id: String;
+  title: String;
+  availability: String;
+  description: String;
+  published: Boolean;
+  dueDate: Date;
+  numberOfQuestions: Number;
+  course: String;
+  quizType: String;
+  assignmentGroup: String;
+  shuffleAnswers: String;
+  timeLimit: Number;
+  multipleAttempts: String;
+  showCorrectAnswers: String;
+  accessCode: String;
+  oneQuestionAtATime: String;
+  webCamRequired: String;
+  lockQuestionsAfterAnswering: String;
+  availableDate: Date;
+  untilDate: Date;
+}
 
-export const deleteQuiz = async (quizId: any) => {
-  const response = await axios.delete(`${QUIZ_API}/${quizId}`);
+export const updateQuiz = async (quiz: any) => {
+  const response = await api.put(`${Quizzes_API}/updateQuiz/${quiz.id}`, quiz);
+  return response.data;
+};
+
+export const findAllQuizzes = async () => {
+  const response = await api.get(`${Quizzes_API}`);
+  return response.data;
+};
+
+export const createQuiz = async (quiz: Quiz) => {
+  const response = await api.post(`${Quizzes_API}`, quiz);
+  return response.data;
+};
+
+export const deleteQuiz = async (quiz: Quiz) => {
+  const response = await api.delete(`${Quizzes_API}/deleteQuiz/${quiz.id}`);
+  return response.data;
+};
+
+export const findQuizById = async (id: String) => {
+  const response = await api.get(`${Quizzes_API}/findQuizById/${id}`);
   return response.data;
 };
 
 export const findQuizzesForCourse = async (courseId: string) => {
-  const response = await axios.get(`${COURSES_API}/${courseId}/quizzes`);
-  return response.data;
-};
-
-export const createQuiz = async (courseId: string, quiz: any) => {
-  const response = await axios.post(`${COURSES_API}/${courseId}/quizzes`, quiz);
-  return response.data;
-};
-
-export const updateQuiz = async (quiz: { _id: any }) => {
-  const response = await axios.put(`${QUIZ_API}/${quiz._id}`, quiz);
+  const response = await axios.get(
+    `${Quizzes_API}/getQuizzesByCourseId/${courseId}`
+  );
   return response.data;
 };

@@ -8,11 +8,15 @@ import Assignments from "./Assignments";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import QuizList from "./Quizzes";
-import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
-import Quizzes from "./Quizzes/Editor";
+import QuizNavigation from "./Quizzes/Editor";
 import Details from "./Quizzes/Editor/Details";
 import Questions from "./Quizzes/Editor/Questions";
+
 import Account from "../Account";
+
+import QuizDetails from "./Quizzes/QuizDetails";
+import QuizPreview from "./Quizzes/QuizPreview";
+
 
 function Courses({ courses }: { courses: any[] }) {
   const API_BASE = process.env.REACT_APP_API_BASE;
@@ -43,9 +47,10 @@ function Courses({ courses }: { courses: any[] }) {
             <Route path="/" element={<Navigate to="Home" />} />
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
-            <Route path="Quizzes" element={<Quizzes />} />
             <Route path="/Account/*" element={<Account/>}/>
-            <Route path="Quizzes/:quizId" element={<QuizDetailsEditor />} />
+            <Route path="Quizzes" element={<QuizList />} />
+            <Route path="Quizzes/:quizId/*" element={<QuizDetails />} />
+            <Route path="Quizzes/:quizId/Editor" element={<QuizNavigation />} />
             <Route path="Piazza" element={<h1>Piazza</h1>} />
             <Route path="Assignments" element={<Assignments />} />
             <Route
@@ -54,9 +59,19 @@ function Courses({ courses }: { courses: any[] }) {
             />
             <Route path="Grades" element={<h1>Grades</h1>} />
             {/*TODO currently set to Quizzes/Editor, have to change to Quizzes (create index.tsx for Quiz)*/}
-            <Route path="Quizzes/*" element={<Quizzes/>} />
-            {/*<Route path="Quizzes/Editor/Details" element={<Details />} />*/}
-            {/*<Route path="Courses/:courseId/Quizzes/Editor/Questions" element={<Questions />} />*/}
+            {/* <Route path="Quizzes/*" element={<Quizzes />} /> */}
+            <Route
+              path="Quizzes/:quizId/Editor/Details"
+              element={<Details />}
+            />
+            <Route
+              path="Quizzes/:quizId/Editor/Questions"
+              element={<Questions />}
+            />
+            <Route
+              path="Quizzes/:quizId/QuizPreview"
+              element={<QuizPreview />}
+            />
           </Routes>
         </div>
       </div>
