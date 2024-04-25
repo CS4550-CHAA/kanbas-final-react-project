@@ -74,13 +74,14 @@ function QuizList() {
   useEffect(() => {
     console.log("courseid" + courseId);
     fetchQuizzesForCourse();
-  }, []);
-
-  //TODO: this isnt working
-  function publishQuiz() {
-    setQuiz({ ...quiz, published: true });
-    updateQuiz();
-    setFlag((flag) => !flag);
+  }, [quizzes]);
+  
+  const publishQuiz = async (quiz: any) => {
+    const newQuiz = { ...quiz, published: !quiz.published };
+    await client.updateQuiz(newQuiz);
+    const res = await client.findQuizById(quiz.id);
+    setQuizzes(quizzes.map((q) => (q.id === res.id ? res : q)));
+    console.log(res)
   }
 
   return (
@@ -145,10 +146,10 @@ function QuizList() {
                 </div>
 
                 <span className="float-end">
-                  {flag ? (
-                    <FaCheckCircle className="text-success" />
+                  {quiz.published ? (
+                    <FaCheckCircle className="text-success" onClick={() => publishQuiz(quiz)} />
                   ) : (
-                    <FaTimesCircle className="text-danger" />
+                    <FaTimesCircle className="text-danger" onClick={() => publishQuiz(quiz)} />
                   )}
 
                   <Dropdown>
@@ -173,12 +174,12 @@ function QuizList() {
                         Delete
                       </Dropdown.Item>
 
-                      {flag ? (
-                        <Dropdown.Item onClick={() => publishQuiz()}>
+                      {quiz.published ? (
+                        <Dropdown.Item onClick={() => publishQuiz(quiz)}>
                           Unpublish
                         </Dropdown.Item>
                       ) : (
-                        <Dropdown.Item onClick={() => publishQuiz()}>
+                        <Dropdown.Item onClick={() => publishQuiz(quiz)}>
                           Publish
                         </Dropdown.Item>
                       )}

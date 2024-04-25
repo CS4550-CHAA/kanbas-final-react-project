@@ -68,11 +68,10 @@ function QuizDetails() {
   };
 
   const publishQuiz = async () => {
-    setQuiz({ ...quiz, published: true });
-    const newQuiz = await client.updateQuiz(quiz);
-    setQuiz({ ...newQuiz, published: true });
-    setQuiz(newQuiz);
-    setFlag((flag) => !flag);
+    const newQuiz = { ...quiz, published: !quiz.published };
+    await client.updateQuiz(newQuiz);
+    const res = await client.findQuizById(quiz.id);
+    setQuiz(res);
   };
 
   console.log(quiz);
@@ -82,13 +81,13 @@ function QuizDetails() {
       <div style={{ display: "flex", flexDirection: "row" }}>
         <button
           style={
-            flag
+            quiz.published
               ? { backgroundColor: "red", color: "white" }
               : { backgroundColor: "green", color: "white" }
           }
           onClick={() => publishQuiz()}
         >
-          <FaCheckCircle /> {flag ? "Unpublish" : "Publish"}
+          <FaCheckCircle /> {quiz.published ? "Unpublish" : "Publish"}
         </button>
 
         <button>

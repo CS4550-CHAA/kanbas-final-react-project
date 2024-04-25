@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader, HStack, Text } from "@chakra-ui/react";
 import { BsTrash3Fill, BsPencil } from "react-icons/bs";
 import { useParams } from "react-router";
 import { Question } from "../../questionClient";
+import * as client from "../../client"
 import * as questionClient from "../../questionClient";
 import * as answerClient from "../../answerClient";
 import Nav from "../Nav";
@@ -39,7 +40,14 @@ function Questions() {
     setQuestion(response.data);
     setQuestions(questions.map((q) => (q.id === question.id ? question : q)));
     setEditMode(false);
+    const quiz = await client.findQuizById(question.quizId)
+    publishQuiz(quiz)
   };
+
+  const publishQuiz = async (quiz: any) => {
+    const newQuiz = { ...quiz, published: true };
+    await client.updateQuiz(newQuiz);
+  }
 
   const deleteQuestion = async (questionId: string) => {
     await questionClient.deleteQuestion(questionId);
@@ -74,6 +82,8 @@ function Questions() {
         await answerClient.updateAnswer(updatedAnswer);
       }
     });
+    const quiz = await client.findQuizById(question.quizId)
+    publishQuiz(quiz)
   };
 
   useEffect(() => {
